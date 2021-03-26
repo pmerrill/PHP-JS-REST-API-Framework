@@ -1,0 +1,30 @@
+@font-face {
+    font-family: 'OPTIMalouGothicBold';
+    src:url('../fonts/OPTIMalouGothicBold.ttf.woff') format('woff'),
+        url('../fonts/OPTIMalouGothicBold.ttf.svg#OPTIMalouGothicBold') format('svg'),
+        url('../fonts/OPTIMalouGothicBold.ttf.eot'),
+        url('../fonts/OPTIMalouGothicBold.ttf.eot?#iefix') format('embedded-opentype'); 
+    font-weight: normal;
+    font-style: normal;
+}
+
+@color-theme: #eff0f0;
+@color-primary: #005a7c;
+@box-shadow: 0 2px 4px 0 rgba(0,0,0,0.15);
+
+body { font-family: 'Open Sans', Helvetica, Arial, sans-serif; }
+.box-shadow { box-shadow: @box-shadow; }
+.navbar-top {
+    height: 75px;
+    box-shadow: @box-shadow;
+}
+.navbar-brand {
+    font-family: 'OPTIMalouGothicBold';
+    font-size: 30px;
+    color: @color-primary !important;
+    text-transform: uppercase;
+}
+.bg-theme { background-color: @color-theme; }
+.search-area {
+    .btn { background-color: @color-primary; }
+}
