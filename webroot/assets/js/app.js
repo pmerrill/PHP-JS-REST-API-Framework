@@ -1,41 +1,63 @@
-//Write your javascript here, or roll your own. It's up to you.
-//Make your ajax call to http://localhost:8765/api/index.php here
 $('document').ready(function(){
 
-    // Listen for the enter key then "click" the form button
-    $('#input-search').keyup(function(event) {
-        if (event.keyCode === 13) {
+    // We want to listen for specific "keyup" events
+    // that trigger a "click" on the submit button.
+    $('#input-search').keyup(function(event){
+        if (isTriggerKeyup(event.key)) {
             $('.btn-search').click();
         }
+        removeMessagesIfValidInput($(this).val());
     });
 
-    // Handle button click
-    $('.btn-search').on('click', function () {
-        let input = $('#input-search').val();
-
-        // 
-        resetView();
-        validate(input);
-
-        //
-        console.log('clicked => ' + input);
-        $('.results-area').removeClass('d-none');
-    });
-
-    //
-    function resetView(){
-        $('.results-area').addClass('d-none');
-        $('.message-area').addClass('d-none');
+    function isTriggerKeyup(eventKey){
+        let isEnterKey = eventKey === 'Enter';
+        return isEnterKey;
     }
 
-    //
-    function validate(input){
-        if(input.length === 0) {
-            $('.results-area').addClass('d-none');
-            $('.message-area').removeClass('d-none');
-            $('.message-area .error').html('<b>Error</b> The input was too short!');
-            return false;
+    function removeMessagesIfValidInput(input){
+        let isMessageAreaEmpty = $('.message-area').is(':empty');
+        if (!isMessageAreaEmpty && isValidInput(input)) {
+            $('.message-area').empty();
         }
     }
-    
+
+    // Go and get data when the submit button is "clicked",
+    // but only after validating the input.
+    $('.btn-search').on('click', function (){
+        const input = $('#input-search').val();
+
+        if(!isValidInput(input)) {
+            renderError();
+            return false;
+        } else {
+            console.log('clicked => ' + input);
+            let submitButton = $(this);
+            startLoadingSpinner(submitButton);
+            //stopLoadingSpinner(submitButton);
+        }
+
+    });
+
+    function isValidInput(input){
+        let isValid = isValidInputLength(input);
+        return isValid;
+    }
+
+    function isValidInputLength(input){
+        return input.length > 0;
+    }
+
+    function renderError(){
+        $('.results-area').addClass('d-none');
+        $('.message-area').append('<div class="error text-danger mt-2"><b>Oops!</b> Looks like you forgot to enter a search term. <i class="far fa-smile-wink"></i></div>').removeClass('d-none');
+    }
+
+    function startLoadingSpinner(button){
+        button.html('<div class="spinner-border spinner-border-sm"" role="status"><span class="visually-hidden">Loading...</span></div>')
+    }
+
+    function stopLoadingSpinner(button){
+        button.html('');
+    }
+
 });

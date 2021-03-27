@@ -11,6 +11,7 @@
 @color-theme: #eff0f0;
 @color-primary: #005a7c;
 @box-shadow: 0 2px 4px 0 rgba(0,0,0,0.15);
+@fs-small: .875em;
 
 body { font-family: 'Open Sans', Helvetica, Arial, sans-serif; }
 .box-shadow { box-shadow: @box-shadow; }
@@ -27,4 +28,7 @@ body { font-family: 'Open Sans', Helvetica, Arial, sans-serif; }
 .bg-theme { background-color: @color-theme; }
 .search-area {
     .btn { background-color: @color-primary; }
+}
+.message-area {
+    .error { font-size: @fs-small; }
 }
