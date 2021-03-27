@@ -31,9 +31,11 @@ $('document').ready(function(){
             return false;
         } else {
             console.log('clicked => ' + input);
+            
             let submitButton = $(this);
-            startLoadingSpinner(submitButton);
-            //stopLoadingSpinner(submitButton);
+            renderLoadingSpinnerIn(submitButton);
+            //renderSearchIconIn(submitButton);
+        
         }
 
     });
@@ -52,12 +54,12 @@ $('document').ready(function(){
         $('.message-area').append('<div class="error text-danger mt-2"><b>Oops!</b> Looks like you forgot to enter a search term. <i class="far fa-smile-wink"></i></div>').removeClass('d-none');
     }
 
-    function startLoadingSpinner(button){
-        button.html('<div class="spinner-border spinner-border-sm"" role="status"><span class="visually-hidden">Loading...</span></div>')
+    function renderLoadingSpinnerIn(element){
+        element.html('<div class="spinner-border spinner-border-sm"" role="status"><span class="visually-hidden">Loading...</span></div>')
     }
 
-    function stopLoadingSpinner(button){
-        button.html('');
+    function renderSearchIconIn(element){
+        element.html('<i class="fas fa-search fs-6"></i>');
     }
 
 });
