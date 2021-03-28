@@ -38,7 +38,6 @@ $('document').ready(function(){
             removeMessagesIfValidInput(searchInput);
             disableForm();
 
-            //
             $.get( '/api/index.php', { search: searchInput } )
             .fail(function() {
                 renderError('<i class="fas fa-exclamation-circle"></i> <b>Bummer!</b> There was a problem processing your search.');
