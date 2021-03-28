@@ -44,7 +44,7 @@ $('document').ready(function(){
                 return false;
             })
             .done(function(result) {
-                console.log(result);
+                $('#resultsArea').html(JSON.stringify(result)).removeClass('d-none');
             })
             .always(function() {
                 renderSearchIconIn(submitButton);

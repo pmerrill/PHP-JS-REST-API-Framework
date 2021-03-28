@@ -1,6 +1,6 @@
 <?php
     
-    // Autoload a controller based on an anonymous function
+    // Autoload controllers from anonymous function
     spl_autoload_register(function($className){
         require_once 'controllers/' . $className . '.php';
     });

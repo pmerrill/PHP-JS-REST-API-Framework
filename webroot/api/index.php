@@ -1,22 +1,28 @@
 <?php
     require_once '../app/bootstrap.php';
+    require_once '../app/helpers/api_helper.php';
     
-    $apiController = new APIController('GET', 'application/json');
+    $apiController = new APIController;
+
+    $apiController->setRequestMethod('GET');
+    $apiController->setContentType('application/json');
     $apiController->setHeaders();
-    $apiController->stopIfInvalidRequest();
-    
-    $searchInput = $apiController->getValue($_GET, 'search');
 
-    $apiController->startCall();
-
-    $callOptions = array(
-        CURLOPT_URL => 'https://restcountries.eu/rest/v2/all',
-        CURLOPT_RETURNTRANSFER => TRUE
-    );
-    $apiController->setCallOptions($callOptions);
+    $apiController->setIsValidRequest();
+    if(!$apiController->isValidRequest) {
+        exitWithError('Request method is invalid.');
+    }
     
-    $results = $apiController->executeCall();
+    $searchInput = $apiController->findKeyValue($_GET, 'search');
+
+    $apiCall = new APICall;
+    $apiCall->setEndpoint('https://restcountries.eu/rest/v2/name/' . $searchInput);
+    //$apiCall->setEndpointParams($searchInput);
+    $apiCall->start();
+    $apiCall->setOptions();
+    $results = $apiCall->execute();
+
     echo $results;
 
-    $apiController->endCall();
+    $apiCall->end();
     exit();

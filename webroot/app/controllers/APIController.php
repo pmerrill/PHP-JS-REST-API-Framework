@@ -2,52 +2,61 @@
     class APIController {
         protected $contentType;
         protected $requestMethod;
-        protected $isValidRequest;
-        public $apiCall;
+        public $isValidRequest;
 
-        public function __construct($requestMethod, $contentType){
-            $this->requestMethod = $requestMethod;
-            $this->contentType = $contentType;
+        public function setRequestMethod($method){
+            $this->requestMethod = $method;
+        }
+
+        public function setContentType($type){
+            $this->contentType = $type;
         }
 
         public function setHeaders(){
             header('Content-Type: ' . $this->contentType);
         }
 
-        public function stopIfInvalidRequest(){
+        public function setIsValidRequest(){
             $this->isValidRequest = $_SERVER['REQUEST_METHOD'] === $this->requestMethod;
-            return !$this->isValidRequest ? exitWithError('Request method is invalid.') : true;
         }
 
-        public function getValue($array, $key){
-            return isset($array[$key]) ? $this->sanitizeValue($array[$key]) : '';
+        public function findKeyValue($array, $key){
+            return isset($array[$key]) ? sanitize($array[$key]) : '';
         }
 
-        protected function sanitizeValue($value){
-            // Remove characters with ASCII value less than 32 or greater than 127
-            return filter_var($value, FILTER_SANITIZE_STRING, array('flags' => FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH));
+    }
+
+    class APICall extends APIController {
+        public $apiCall;
+        private $endpoint;
+
+        public function setEndpoint($endpoint){
+            $this->endpoint = $endpoint;
         }
 
-        public function exitWithError($message){
-            echo json_encode([ 'error' => $message ]);
-            exit();
-        }
+        /*
+        public function setEndpointParams($params){
 
-        public function startCall(){
+        }
+        */
+
+        public function start(){
             $this->apiCall = curl_init();
-            return $this->apiCall;
         }
 
-        public function setCallOptions($options){
+        public function setOptions(){
+            $options = array(
+                CURLOPT_URL => $this->endpoint,
+                CURLOPT_RETURNTRANSFER => TRUE
+            );
             curl_setopt_array($this->apiCall, $options);
         }
 
-        public function executeCall(){
+        public function execute(){
             return curl_exec($this->apiCall);
         }
 
-        public function endCall(){
+        public function end(){
             curl_close($this->apiCall);
         }
-
     }
