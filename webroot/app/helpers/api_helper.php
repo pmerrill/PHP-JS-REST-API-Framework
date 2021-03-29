@@ -10,6 +10,7 @@
     }
 
     function exitWithError($code, $message){
-        echo json_encode([ 'status' => $code, 'message' => $message ]);
+        $output = array('status' => [ 'code' => $code, 'message' => $message ]);
+        echo json_encode($output);
         exit();
     }

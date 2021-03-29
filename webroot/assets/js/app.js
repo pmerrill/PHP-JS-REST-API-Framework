@@ -36,6 +36,7 @@ $('document').ready(function(){
             const submitButton = $(this);
             renderLoadingSpinnerIn(submitButton);
             removeMessagesIfValidInput(searchInput);
+            removeResults();
             disableForm();
 
             $.get( '/api/index.php', { search: searchInput } )
@@ -43,7 +44,7 @@ $('document').ready(function(){
                 renderError('<i class="fas fa-exclamation-circle"></i> <b>Bummer!</b> There was a problem processing your search.');
             })
             .done(function(results) {
-                renderResults(results);
+                processResults(results);
             })
             .always(function() {
                 renderSearchIconIn(submitButton);
@@ -73,8 +74,24 @@ $('document').ready(function(){
         element.html('<div class="spinner-border spinner-border-sm"" role="status"><span class="visually-hidden">Loading...</span></div>');
     }
 
+    function removeResults(){
+        $('#resultsArea').addClass('d-none').empty();
+    }
+
     function disableForm(){
         $('#searchInput').attr('disabled', true);
+    }
+
+    function processResults(results){
+        resultsHaveError(results) ? renderError('<i class="fas fa-exclamation-circle"></i> <b>Uh oh!</b> ' + results['status']['message']) : renderResults(results);
+    }
+
+    function resultsHaveError(results){
+        return results['status']['code'] !== successStatusCode();
+    }
+
+    function successStatusCode(){
+        return 200;
     }
 
     function renderResults(results){
@@ -86,16 +103,36 @@ $('document').ready(function(){
         table  = '<table class="table">';
         table += '  <thead>';
         table += '      <tr>';
-        table += '          <th scope="col">Temporary Display</th>';
+        table += '          <th scope="col" colspan="2">Results</th>';
+        table += '          <th scope="col">alpha2Code</th>';
+        table += '          <th scope="col">alpha3Code</th>';
+        table += '          <th scope="col">Region</th>';
+        table += '          <th scope="col">Subregion</th>';
+        table += '          <th scope="col">Languages</th>';
         table += '      </tr>';
         table += '  </thead>';
         table += '  <tbody>';
-        table += '      <tr>';
-        table += '          <td>' + JSON.stringify(results) + '</th>';
-        table += '      </tr>';
+        table +=        generateCountryTableRows(results);
         table += '  </tbody>';
         table += '</table>';
         return table;
+    }
+
+    function generateCountryTableRows(results){
+        let rows = '';
+        let countries = results['result'];
+        for(let index = 0; index < countries.length; index++){
+            rows += '<tr>';
+            rows += '   <td><img src="' + countries[index]['flag'] + '" class="w-100"></td>';
+            rows += '   <td>' + countries[index]['name'] + '</td>';
+            rows += '   <td>' + countries[index]['alpha2Code'] + '</td>';
+            rows += '   <td>' + countries[index]['alpha3Code'] + '</td>';
+            rows += '   <td>' + countries[index]['region'] + '</td>';
+            rows += '   <td>' + countries[index]['subregion'] + '</td>';
+            rows += '   <td>' + JSON.stringify(countries[index]['languages']) + '</td>';
+            rows += '</tr>';
+        }
+        return rows;
     }
 
     function renderSearchIconIn(element){

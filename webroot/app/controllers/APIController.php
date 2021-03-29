@@ -30,8 +30,9 @@
         private $endpointParameterString;
         public $endpoint;
         public $apiCall;
+        public $hasError;
         public $result;
-        protected $sortByKey;
+        protected $sortKey;
         
         public function setEndpointBase($base){
             $this->endpointBase = $base;
@@ -45,7 +46,7 @@
             $this->endpointParams = $paramsArray;
         }
 
-        public function setCompiledEndpoint(){
+        public function compileEndpoint(){
             $this->endpoint = $this->endpointBase . $this->endpointPath . '?' . http_build_query($this->endpointParams);
         }
 
@@ -65,13 +66,25 @@
             $this->result = json_decode($resultObject, true);
         }
 
-        public function setSortByKey($key){
-            $this->sortByKey = $key;
+        public function setHasError(){
+            $this->hasError = $this->hasErrorCode() || $this->hasEmptyResult();
         }
 
-        public function sortKeyValueDesc(){
+        protected function hasErrorCode(){
+            return curl_errno($this->apiCall) > 0;
+        }
+
+        protected function hasEmptyResult(){
+            return empty($this->result);
+        }
+
+        public function setSortKey($key){
+            $this->sortKey = $key;
+        }
+
+        public function sortDesc(){
             usort($this->result, function($a, $b){
-                return isset($b[$this->sortByKey]) ? $b[$this->sortByKey] <=> $a[$this->sortByKey] : false;
+                return isset($b[$this->sortKey]) ? $b[$this->sortKey] <=> $a[$this->sortKey] : false;
             });
         }
 
@@ -81,7 +94,7 @@
 
     }
 
-    class RESTCountries extends APICall {
+    class RestCountries extends APICall {
         public $result;
         public $isValidResponse;
         public $responseCode;
@@ -96,7 +109,7 @@
         }
 
         public function setResponseMessage(){
-            $this->responseMessage = isset($this->result['message']) ? $this->result['message'] : 'No problems were found.';
+            $this->responseMessage = isset($this->result['message']) ? $this->result['message'] : '';
         }
 
         public function validateResponse(){
