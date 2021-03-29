@@ -21,7 +21,7 @@
 
     $apiCall->start();
 
-    // Configure the call
+    // Specify API call requirements.
     $options = array(
         CURLOPT_URL => $apiCall->endpoint,
         CURLOPT_RETURNTRANSFER => TRUE,
@@ -33,6 +33,7 @@
     
     // TODO: Handle API call errors
 
+    //
     if(empty($result)){
         $apiCall->end();
         exitWithError(404, 'The endpoint didn\'t return anything.');
@@ -40,19 +41,18 @@
 
     $apiCall->setResult($result);
 
-    // Required if sorting the results
+    // Must set a sort key if sorting the results
     $apiCall->setSortByKey('population');
 
-    // Will only sort if sortByKey was
-    // set and exists in the response.
+    // Sort the results if sortByKey was set and exists.
     $apiCall->sortKeyValueDesc();
 
     $restCountries = new RESTCountries($apiCall->result);
     $restCountries->setResponseCode();
     $restCountries->setResponseMessage();
     
-    // The REST Countries API will respond
-    // with an error message if there was a problem.
+    // End the call if the REST Countries API
+    // response contains an error code.
     $restCountries->validateResponse();
     if(!$restCountries->isValidResponse) {
         $apiCall->end();
