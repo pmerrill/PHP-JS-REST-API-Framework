@@ -23,7 +23,15 @@
 
     $results = $apiCall->execute();
 
-    $restCountries = new RestCountries($results);
+    $restCountries = new RESTCountries($results);
+    $restCountries->setResponseCode();
+    $restCountries->setResponseMessage();
+    $restCountries->validateResponse();
+    if(!$restCountries->isValidResponse) {
+        exitWithError($restCountries->responseCode, $restCountries->responseMessage);
+    }
+
+    // Handle rest countries error (check for status and message)
     $restCountries->sortPopulationDesc();
     
     echo json_encode($restCountries->results);

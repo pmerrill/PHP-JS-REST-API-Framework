@@ -68,11 +68,26 @@
         }
     }
 
-    class RestCountries extends APICall {
+    class RESTCountries extends APICall {
         public $results;
+        public $isValidResponse;
+        public $responseCode;
+        public $responseMessage;
 
         public function __construct($results){
             $this->results = json_decode($results, true);
+        }
+
+        public function setResponseCode(){
+            $this->responseCode = isset($this->results['status']) ? $this->results['status'] : 200;
+        }
+
+        public function setResponseMessage(){
+            $this->responseMessage = isset($this->results['message']) ? $this->results['message'] : 'No problems were found.';
+        }
+
+        public function validateResponse(){
+            $this->isValidResponse = $this->responseCode === 200;
         }
 
         public function sortPopulationDesc(){
