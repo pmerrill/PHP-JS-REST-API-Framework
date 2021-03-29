@@ -41,10 +41,9 @@ $('document').ready(function(){
             $.get( '/api/index.php', { search: searchInput } )
             .fail(function() {
                 renderError('<i class="fas fa-exclamation-circle"></i> <b>Bummer!</b> There was a problem processing your search.');
-                return false;
             })
-            .done(function(result) {
-                $('#resultsArea').html(JSON.stringify(result)).removeClass('d-none');
+            .done(function(results) {
+                renderResults(results);
             })
             .always(function() {
                 renderSearchIconIn(submitButton);
@@ -76,6 +75,27 @@ $('document').ready(function(){
 
     function disableForm(){
         $('#searchInput').attr('disabled', true);
+    }
+
+    function renderResults(results){
+        $('#resultsArea').html(resultsTable(results)).removeClass('d-none');
+    }
+
+    function resultsTable(results){
+        let table;
+        table  = '<table class="table">';
+        table += '  <thead>';
+        table += '      <tr>';
+        table += '          <th scope="col">Temporary Display</th>';
+        table += '      </tr>';
+        table += '  </thead>';
+        table += '  <tbody>';
+        table += '      <tr>';
+        table += '          <td>' + JSON.stringify(results) + '</th>';
+        table += '      </tr>';
+        table += '  </tbody>';
+        table += '</table>';
+        return table;
     }
 
     function renderSearchIconIn(element){

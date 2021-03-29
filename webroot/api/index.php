@@ -8,21 +8,25 @@
     $apiController->setContentType('application/json');
     $apiController->setHeaders();
 
-    $apiController->setIsValidRequest();
+    $apiController->validateRequest();
     if(!$apiController->isValidRequest) {
-        exitWithError('Request method is invalid.');
+        exitWithError(400, 'Request method is invalid.');
     }
-    
-    $searchInput = $apiController->findKeyValue($_GET, 'search');
 
     $apiCall = new APICall;
-    $apiCall->setEndpoint('https://restcountries.eu/rest/v2/name/' . $searchInput);
-    //$apiCall->setEndpointParams($searchInput);
+    $apiCall->setEndpointBase('https://restcountries.eu/rest/v2');
+    $apiCall->setEndpointPath('/name/' . findKeyValue($_GET, 'search'));
+    $apiCall->setEndpointParams( ['fields' => 'alpha2Code;alpha3Code;flag;languages;name;population;region;subregion'] );
+    $apiCall->setCompiledEndpoint();
     $apiCall->start();
     $apiCall->setOptions();
+
     $results = $apiCall->execute();
 
-    echo $results;
+    $restCountries = new RestCountries($results);
+    $restCountries->sortPopulationDesc();
+    
+    echo json_encode($restCountries->results);
 
     $apiCall->end();
     exit();
