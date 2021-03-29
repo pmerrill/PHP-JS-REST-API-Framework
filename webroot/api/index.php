@@ -18,23 +18,48 @@
     $apiCall->setEndpointPath('/name/' . findKeyValue($_GET, 'search'));
     $apiCall->setEndpointParams( ['fields' => 'alpha2Code;alpha3Code;flag;languages;name;population;region;subregion'] );
     $apiCall->setCompiledEndpoint();
+
     $apiCall->start();
-    $apiCall->setOptions();
 
-    $results = $apiCall->execute();
+    // Configure the call
+    $options = array(
+        CURLOPT_URL => $apiCall->endpoint,
+        CURLOPT_RETURNTRANSFER => TRUE,
+        CURLOPT_FAILONERROR => TRUE
+    );
+    $apiCall->setOptions($options);
 
-    $restCountries = new RESTCountries($results);
+    $result = $apiCall->execute();
+    
+    // TODO: Handle API call errors
+
+    if(empty($result)){
+        $apiCall->end();
+        exitWithError(404, 'The endpoint didn\'t return anything.');
+    }
+
+    $apiCall->setResult($result);
+
+    // Required if sorting the results
+    $apiCall->setSortByKey('population');
+
+    // Will only sort if sortByKey was
+    // set and exists in the response.
+    $apiCall->sortKeyValueDesc();
+
+    $restCountries = new RESTCountries($apiCall->result);
     $restCountries->setResponseCode();
     $restCountries->setResponseMessage();
+    
+    // The REST Countries API will respond
+    // with an error message if there was a problem.
     $restCountries->validateResponse();
     if(!$restCountries->isValidResponse) {
+        $apiCall->end();
         exitWithError($restCountries->responseCode, $restCountries->responseMessage);
     }
 
-    // Handle rest countries error (check for status and message)
-    $restCountries->sortPopulationDesc();
-    
-    echo json_encode($restCountries->results);
+    echo json_encode($apiCall->result);
 
     $apiCall->end();
     exit();
