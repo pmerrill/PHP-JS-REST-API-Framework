@@ -1,5 +1,13 @@
 <?php
 
+    function setHeaders($headersArray){
+        if(is_array($headersArray)){
+            foreach($headersArray as $header){
+                header($header);
+            }
+        }
+    }
+
     function findKeyValue($array, $key){
         return isset($array[$key]) ? sanitize($array[$key]) : '';
     }
@@ -9,8 +17,24 @@
         return filter_var($value, FILTER_SANITIZE_STRING, array('flags' => FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH));
     }
 
+    function buildQueryString($paramsArray){
+        return http_build_query($paramsArray);
+    }
+
     function exitWithError($code, $message){
-        $output = array('status' => [ 'code' => $code, 'message' => $message ]);
+        $output = outputTemplate();
+        $output['status'] = array('code' => $code, 'message' => $message);
         echo json_encode($output);
         exit();
+    }
+
+    function outputTemplate(){
+        return array(
+            'result' => [],
+            'total' => [],
+            'status' => [
+                'code' => 200,
+                'message' => ''
+            ]
+        );
     }

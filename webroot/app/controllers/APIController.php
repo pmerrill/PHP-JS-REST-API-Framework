@@ -1,53 +1,46 @@
 <?php
     class APIController {
-        protected $contentType;
-        protected $requestMethod;
+        private $requestMethod;
         public $isValidRequest;
 
-        public function setRequestMethod($method){
-            $this->requestMethod = $method;
-        }
-
-        public function setContentType($type){
-            $this->contentType = $type;
-        }
-
-        public function setHeaders(){
-            header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
-            header('Content-Type: ' . $this->contentType);
+        public function setRequestMethod($requestMethod){
+            $this->requestMethod = $requestMethod;
         }
 
         public function validateRequest(){
-            $this->isValidRequest = $_SERVER['REQUEST_METHOD'] === $this->requestMethod;
+            $this->isValidRequest = $this->isValidRequestMethod();
+        }
+
+        private function isValidRequestMethod(){
+            return $_SERVER['REQUEST_METHOD'] === $this->requestMethod;
         }
 
     }
 
     class APICall extends APIController {
-        private $endpointBase;
+        private $endpointHost;
         private $endpointPath;
-        private $endpointParams;
-        private $endpointParameterString;
+        private $endpointQueryString;
         public $endpoint;
-        public $apiCall;
+        private $apiCall;
         public $hasError;
         public $result;
-        protected $sortKey;
+        private $sortKey;
         
-        public function setEndpointBase($base){
-            $this->endpointBase = $base;
+        public function setEndpointHost($host){
+            $this->endpointHost = $host;
         }
 
         public function setEndpointPath($path){
             $this->endpointPath = $path;
         }
 
-        public function setEndpointParams($paramsArray){
-            $this->endpointParams = $paramsArray;
+        public function setEndpointQueryString($queryString){
+            $this->endpointQueryString = $queryString;
         }
 
         public function compileEndpoint(){
-            $this->endpoint = $this->endpointBase . $this->endpointPath . '?' . http_build_query($this->endpointParams);
+            $this->endpoint = $this->endpointHost . $this->endpointPath . '?' . $this->endpointQueryString;
         }
 
         public function start(){
@@ -66,21 +59,31 @@
             $this->hasError = $this->hasErrorCode();
         }
 
-        protected function hasErrorCode(){
+        private function hasErrorCode(){
             return curl_errno($this->apiCall) > 0;
         }
 
-        public function setResult($resultObject){
-            $this->result = json_decode($resultObject, true);
+        public function setResult($result){
+            $this->result = $result;
         }
 
         public function setSortKey($sortKey){
             $this->sortKey = $sortKey;
         }
 
-        public function sortDesc(){
+        public function sort($sortDirection){
+            $sortDirection === 'desc' ? $this->sortDesc() : $this->sortAsc();
+        }
+
+        private function sortDesc(){
             usort($this->result, function($a, $b){
                 return isset($b[$this->sortKey]) ? $b[$this->sortKey] <=> $a[$this->sortKey] : false;
+            });
+        }
+
+        private function sortAsc(){
+            usort($this->result, function($a, $b){
+                return isset($a[$this->sortKey]) ? $a[$this->sortKey] <=> $b[$this->sortKey] : false;
             });
         }
 
