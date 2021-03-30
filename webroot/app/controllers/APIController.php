@@ -1,4 +1,5 @@
 <?php
+
     class APIController {
         private $requestMethod;
         public $isValidRequest;
@@ -91,4 +92,12 @@
             curl_close($this->apiCall);
         }
 
+    }
+
+    class RestCountries extends APICall {
+        public $isAlphaCodeSearch;
+
+        public function setIsAlphaCode($searchTerm){
+            $this->isAlphaCodeSearch = strlen($searchTerm) <= 3;
+        }
     }

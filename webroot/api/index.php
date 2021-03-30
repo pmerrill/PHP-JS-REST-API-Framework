@@ -19,9 +19,12 @@
     $apiCall = new APICall;
     $apiCall->setEndpointHost( 'https://restcountries.eu' );
 
-    // Determine the endpoint path.
+    // Process form input.
     $country = findKeyValue($_GET, 'search');
-    $endpointPath = strlen($country) <= 3 ? '/rest/v2/alpha/' : '/rest/v2/name/';
+    $isAlphaCodeSearch = strlen($country) <= 3;
+
+    // Determine the endpoint path.
+    $endpointPath = $isAlphaCodeSearch ? '/rest/v2/alpha/' : '/rest/v2/name/';
     $apiCall->setEndpointPath( $endpointPath . $country );
 
     // Translate parameters into a usable query string.
@@ -42,6 +45,11 @@
 
     $result = $apiCall->execute();
     $result = json_decode($result, true);
+
+    // Shift the results if searching the alpha code endpoint.
+    // The alpha code endpoint does not return an array.
+    $result = $isAlphaCodeSearch ? array($result) : $result;
+    
     $apiCall->setResult($result);
 
     // Perform error checks before continuing.
@@ -55,8 +63,17 @@
     $apiCall->setSortKey('population');
     $apiCall->sort('desc');
 
+    // Find the number of times a key value occurs.
+    $regions = findKeyValueOccurrences($apiCall->result, 'region');
+    $subregions = findKeyValueOccurrences($apiCall->result, 'subregion');
+
     $output = outputTemplate();
     $output['result'] = $apiCall->result;
+    $output['stats'] = [
+        'countries' => sizeof($apiCall->result),
+        'regions' => $regions,
+        'subregions' => $subregions
+    ];
     echo json_encode($output);
 
     $apiCall->end();

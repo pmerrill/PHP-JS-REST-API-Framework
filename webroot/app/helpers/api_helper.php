@@ -21,6 +21,12 @@
         return http_build_query($paramsArray);
     }
 
+    // Find the number of times a value occurs.
+    function findKeyValueOccurrences($array, $column) {
+        $columnArray = array_column($array, $column);
+        return array_count_values($columnArray);
+    }
+
     function exitWithError($code, $message){
         $output = outputTemplate();
         $output['status'] = array('code' => $code, 'message' => $message);
@@ -30,11 +36,10 @@
 
     function outputTemplate(){
         return array(
-            'result' => [],
-            'total' => [],
             'status' => [
                 'code' => 200,
                 'message' => ''
-            ]
+            ],
+            'result' => []
         );
     }
