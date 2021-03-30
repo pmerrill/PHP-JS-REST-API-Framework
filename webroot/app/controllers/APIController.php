@@ -62,24 +62,20 @@
             return curl_exec($this->apiCall);
         }
 
-        public function setResult($resultObject){
-            $this->result = json_decode($resultObject, true);
-        }
-
         public function setHasError(){
-            $this->hasError = $this->hasErrorCode() || $this->hasEmptyResult();
+            $this->hasError = $this->hasErrorCode();
         }
 
         protected function hasErrorCode(){
             return curl_errno($this->apiCall) > 0;
         }
 
-        protected function hasEmptyResult(){
-            return empty($this->result);
+        public function setResult($resultObject){
+            $this->result = json_decode($resultObject, true);
         }
 
-        public function setSortKey($key){
-            $this->sortKey = $key;
+        public function setSortKey($sortKey){
+            $this->sortKey = $sortKey;
         }
 
         public function sortDesc(){
@@ -90,30 +86,6 @@
 
         public function end(){
             curl_close($this->apiCall);
-        }
-
-    }
-
-    class RestCountries extends APICall {
-        public $result;
-        public $isValidResponse;
-        public $responseCode;
-        public $responseMessage;
-
-        public function __construct($result){
-            $this->result = $result;
-        }
-
-        public function setResponseCode(){
-            $this->responseCode = isset($this->result['status']) ? $this->result['status'] : 200;
-        }
-
-        public function setResponseMessage(){
-            $this->responseMessage = isset($this->result['message']) ? $this->result['message'] : '';
-        }
-
-        public function validateResponse(){
-            $this->isValidResponse = $this->responseCode === 200;
         }
 
     }

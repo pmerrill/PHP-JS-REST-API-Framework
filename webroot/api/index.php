@@ -35,36 +35,26 @@
     $apiCall->setOptions($options);
 
     $result = $apiCall->execute();
-    $apiCall->setResult($result);
 
+    // Perform error checks before continuing.
     $apiCall->setHasError();
     if($apiCall->hasError){
         $apiCall->end();
         exitWithError(404, 'We couldn\'t find anything for you.');
     }
 
+    $apiCall->setResult($result);
+
     // Set a sort key before sorting the results.
     $apiCall->setSortKey('population');
-
-    // Sort the results if sort key was set and exists.
     $apiCall->sortDesc();
 
-    $restCountries = new RestCountries($apiCall->result);
-    $restCountries->setResponseCode();
-    $restCountries->setResponseMessage();
-    
-    $restCountries->validateResponse();
-    if(!$restCountries->isValidResponse){
-        $apiCall->end();
-        exitWithError($restCountries->responseCode, $restCountries->responseMessage);
-    }
-
     $output = array(
-        'result' => $restCountries->result,
+        'result' => $apiCall->result,
         'total' => [],
         'status' => array(
-            'code' => $restCountries->responseCode,
-            'message' => $restCountries->responseMessage
+            'code' => 200,
+            'message' => ''
         )
     );
     echo json_encode($output);
