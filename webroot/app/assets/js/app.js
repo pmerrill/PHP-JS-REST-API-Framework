@@ -1,34 +1,27 @@
 $('document').ready(function(){
 
-    // We want to listen for specific "keyup" events
-    // that trigger a "click" on the submit button.
+    // "Click" the submit button on specific keyup event.
     $('#searchInput').keyup(function(event){
-        if (isButtonClickKey(event.key)) {
+        if (event.key === 'Enter') {
             $('#searchButton').click();
         }
-        display.render.emptyMessages();
     });
 
-    function isButtonClickKey(eventKey){
-        return eventKey === 'Enter';
-    }
-
-    // Go and get data when the submit button is "clicked",
-    // but only after validating the input.
     $('#searchButton').on('click', function (){
-        api.search.term = $('#searchInput').val();
+        api[api.host].param.search.value = $('#searchInput').val();
 
-        if(!api.search.isValid()) {
+        if(!api[api.host].param.search.isValid()) {
             display.render.error('<b>Oops!</b> Looks like you forgot to enter a search term. <i class="far fa-smile-wink"></i>');
             return false;
         } else {
             
-            // Modify the UI so the user knows
-            // we're working on their search.
             display.submitButton = $(this);
             display.state.loading();
 
-            $.get( '/api/index.php', { search: api.search.term } )
+            $.get(
+                api[api.host].endpoint,
+                api.parameters()
+            )
             .fail(function() {
                 display.render.error('<i class="fas fa-exclamation-circle"></i> <b>Bummer!</b> There was a problem processing your search.');
             })
@@ -38,7 +31,7 @@ $('document').ready(function(){
                 if (api.response.hasError()) {
                     display.render.error('<i class="fas fa-exclamation-circle"></i> <b>Uh oh!</b> ' + results['status']['message'])
                 } else {
-                    renderResults();
+                    display.render.results();
                 }
 
             })
@@ -50,63 +43,6 @@ $('document').ready(function(){
         }
 
     });
-
-    function renderResults(){
-        if (api.response.hasCategory()){
-            
-            let category = api.response.category();
-            let results = api.response.results['result'];
-            
-            for(const element of results){
-                $('#resultsArea').append( api.factory[category](element) );  
-            }
-            
-            $('#resultsArea').removeClass('d-none');
-        
-        } else {
-            display.render.error('<i class="fas fa-exclamation-circle"></i> <b>Uh oh!</b> There was an internal error. No category was set.');
-        }
-    }
-
-    const api = {
-        search: {
-            term: '',
-            isValid: function(){
-                return this.isValidLength();
-            },
-            isValidLength: function(){
-                return this.term.length > 0;
-            }
-        },
-        response: {
-            results: [],
-            hasError: function() {
-                return !this.hasResults || this.hasErrorCode();
-            },
-            hasResults: function(){
-                return this.results.length > 0;
-            },
-            hasErrorCode: function(){
-                return this.results['status']['code'] !== this.successStatusCode;
-            },
-            successStatusCode: 200,
-            category: function(){
-                return this.hasCategory() ? this.results['info']['category'] : '';
-            },
-            hasCategory: function(){
-                return typeof(this.results['info']['category']) !== 'undefined';
-            }
-        },
-        // Properties must match the category set in a endpoint.
-        factory: {
-            RESTCountries: function(element) {
-                return generateCountry(element);
-            },
-            /*MetaWeather: function(element) {
-                return generateWeather(element);
-            }*/
-        }
-    }
 
     const display = {
         submitButton: null,
@@ -135,6 +71,12 @@ $('document').ready(function(){
             },
             enabledForm: function(){
                 return $('#searchInput').attr('disabled', false);
+            },
+            results: function(){
+                for(const element of api.response.results['result']){
+                    $('#resultsArea').append( api[api.host].factory(element) );  
+                }
+                $('#resultsArea').removeClass('d-none');
             }
         },
         state: {
@@ -150,22 +92,72 @@ $('document').ready(function(){
             }
         }
     }
+    
+    const api = {
+        host: $('#searchArea').data('host'),
+        
+        //
+        RESTCountries: {
+            endpoint: '/api/index.php',
+            param: {
+                search: {
+                    value: '',
+                    isValid: function(){
+                        return this.isValidLength();
+                    },
+                    isValidLength: function(){
+                        return this.value.length > 0;
+                    }
+                },
+                fields: {
+                    value: 'alpha2Code;alpha3Code;flag;languages;name;population;region;subregion'
+                }
+            },
+            factory: function(element) {
+                return this.generate(element);
+            },
+            generate: function(element){
+                let output = '';
+                output += '<div class="list-group">';
+                output += '     <div class="list-group-item list-group-item-action">';
+                output += '         <div class="d-flex w-100 justify-content-between">';
+                output += '             <img src="' + element['flag'] + '" class="w-100">';
+                output += '             <h5 class="mb-1">' + element['name'] + '</h5>';
+                output += '             <small>' + element['alpha2Code'] + ' ' + element['alpha3Code'] + '</small>';
+                output += '         </div>';
+                output += '         <p class="mb-1">' + element['region'] + '' + element['subregion'] + '</p>';
+                output += '         <small>' + element['population'] + '</small>';
+                output += '         <small>' + JSON.stringify(element['languages']) + '</small>';
+                output += '     </div>';
+                output += '</div>';
+                return output;
+            }
+        },
 
-    function generateCountry(element){
-        let output = '';
-        output += '<div class="list-group">';
-        output += '     <div class="list-group-item list-group-item-action">';
-        output += '         <div class="d-flex w-100 justify-content-between">';
-        output += '             <img src="' + element['flag'] + '" class="w-100">';
-        output += '             <h5 class="mb-1">' + element['name'] + '</h5>';
-        output += '             <small>' + element['alpha2Code'] + ' ' + element['alpha3Code'] + '</small>';
-        output += '         </div>';
-        output += '         <p class="mb-1">' + element['region'] + '' + element['subregion'] + '</p>';
-        output += '         <small>' + element['population'] + '</small>';
-        output += '         <small>' + JSON.stringify(element['languages']) + '</small>';
-        output += '     </div>';
-        output += '</div>';
-        return output;
+        //
+        parameters: function(){
+            let output = {};
+            let params = api[api.host].param;
+            for(const property in params){
+                output[property] = params[property].value;
+            }
+            return output;
+        },
+
+        response: {
+            results: [],
+            hasError: function() {
+                return !this.hasResults || this.hasErrorCode();
+            },
+            hasResults: function(){
+                return this.results.length > 0;
+            },
+            hasErrorCode: function(){
+                return this.results['status']['code'] !== this.successStatusCode;
+            },
+            successStatusCode: 200
+        },
+
     }
 
 });

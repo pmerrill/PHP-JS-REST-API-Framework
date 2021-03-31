@@ -16,9 +16,6 @@
         exitWithError(400, 'There was a problem processing your search.');
     }
 
-    // Category must match app.js object literal property.
-    $apiController->setCategory('RESTCountries');
-
     $apiCall = new APICall;
     $apiCall->setEndpointHost( 'https://restcountries.eu' );
 
@@ -30,7 +27,9 @@
     $apiCall->setEndpointPath( '/rest/v2/' . $pathPart . '/' . $country );
 
     // Optional parameters
-    $parameters = ['fields' => 'alpha2Code;alpha3Code;flag;languages;name;population;region;subregion'];
+    $parameters = [
+        'fields' => findKeyValue($_GET, 'fields')
+    ];
     $queryString = buildQueryString($parameters);
     $apiCall->setEndpointQueryString($queryString);
 
@@ -64,7 +63,6 @@
     $output = outputTemplate();
     $output['result'] = $apiCall->result;
     $output['info'] = [
-        'category' => $apiController->category,
         'items' => count($apiCall->result),
         'regions' => countColumn($apiCall->result, 'region'),
         'subregions' => countColumn($apiCall->result, 'subregion')
