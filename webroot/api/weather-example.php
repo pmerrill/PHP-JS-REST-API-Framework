@@ -9,6 +9,9 @@
     setHeaders($headers);
 
     $apiController = new APIController;
+
+    // Category must match app.js object literal property.
+    $apiController->setCategory('MetaWeather');
     
     $apiController->defineRequestMethod('GET');
     $apiController->validateRequest();
@@ -46,7 +49,7 @@
 
     $output = outputTemplate();
     $output['result'] = $apiCall->result;
-    
+    $output['info'] = [ 'category' => $apiController->category ];
     echo json_encode($output);
 
     $apiCall->end();

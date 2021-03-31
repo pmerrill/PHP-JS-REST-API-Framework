@@ -1,8 +1,13 @@
 <?php
 
     class APIController {
+        public $category;
         private $requestMethod;
         public $isValidRequest;
+
+        public function setCategory($category){
+            $this->category = $category;
+        }
 
         public function defineRequestMethod($requestMethod){
             $this->requestMethod = $requestMethod;

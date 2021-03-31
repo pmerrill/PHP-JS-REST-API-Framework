@@ -9,12 +9,15 @@
     setHeaders($headers);
 
     $apiController = new APIController;
-    
+
     $apiController->defineRequestMethod('GET');
     $apiController->validateRequest();
     if(!$apiController->isValidRequest){
         exitWithError(400, 'There was a problem processing your search.');
     }
+
+    // Category must match app.js object literal property.
+    $apiController->setCategory('RESTCountries');
 
     $apiCall = new APICall;
     $apiCall->setEndpointHost( 'https://restcountries.eu' );
@@ -60,8 +63,9 @@
 
     $output = outputTemplate();
     $output['result'] = $apiCall->result;
-    $output['stats'] = [
-        'countries' => count($apiCall->result),
+    $output['info'] = [
+        'category' => $apiController->category,
+        'items' => count($apiCall->result),
         'regions' => countColumn($apiCall->result, 'region'),
         'subregions' => countColumn($apiCall->result, 'subregion')
     ];
