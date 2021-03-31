@@ -25,11 +25,12 @@ $('document').ready(function(){
             .fail(function() {
                 display.render.error('<i class="fas fa-exclamation-circle"></i> <b>Bummer!</b> There was a problem processing your search.');
             })
-            .done(function(results) {
-                api.response.results = results;
+            .done(function(response) {
+                api.response.results = response['result'];
+                api.response.status = response['status'];
 
                 if (api.response.hasError()) {
-                    display.render.error('<i class="fas fa-exclamation-circle"></i> <b>Uh oh!</b> ' + results['status']['message'])
+                    display.render.error('<i class="fas fa-exclamation-circle"></i> <b>Uh oh!</b> ' + api.response.status['message'])
                 } else {
                     display.render.results();
                 }
@@ -73,7 +74,7 @@ $('document').ready(function(){
                 return $('#searchInput').attr('disabled', false);
             },
             results: function(){
-                for(const element of api.response.results['result']){
+                for(const element of api.response.results){
                     $('#resultsArea').append( api[api.host].factory(element) );  
                 }
                 $('#resultsArea').removeClass('d-none');
@@ -113,6 +114,8 @@ $('document').ready(function(){
                     value: 'alpha2Code;alpha3Code;flag;languages;name;population;region;subregion'
                 }
             },
+
+            //
             factory: function(element) {
                 return this.generate(element);
             },
@@ -144,8 +147,10 @@ $('document').ready(function(){
             return output;
         },
 
+        //
         response: {
             results: [],
+            status: {'code': 500, 'message': 'There was a problem.'},
             hasError: function() {
                 return !this.hasResults || this.hasErrorCode();
             },
@@ -153,7 +158,7 @@ $('document').ready(function(){
                 return this.results.length > 0;
             },
             hasErrorCode: function(){
-                return this.results['status']['code'] !== this.successStatusCode;
+                return this.status['code'] !== this.successStatusCode;
             },
             successStatusCode: 200
         },

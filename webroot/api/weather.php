@@ -1,6 +1,6 @@
 <?php
-    require_once '../app/bootstrap.php';
-    require_once '../app/helpers/api_helper.php';
+    require_once '../bootstrap.php';
+    require_once '../helpers/api_helper.php';
     
     $headers = array(
         'Cache-Control: no-store, no-cache, must-revalidate, max-age=0',

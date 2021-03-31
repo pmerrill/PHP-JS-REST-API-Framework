@@ -1,9 +1,9 @@
 @font-face {
     font-family: 'OPTIMalouGothicBold';
-    src:url('../fonts/OPTIMalouGothicBold.ttf.woff') format('woff'),
-        url('../fonts/OPTIMalouGothicBold.ttf.svg#OPTIMalouGothicBold') format('svg'),
-        url('../fonts/OPTIMalouGothicBold.ttf.eot'),
-        url('../fonts/OPTIMalouGothicBold.ttf.eot?#iefix') format('embedded-opentype'); 
+    src:url('/fonts/OPTIMalouGothicBold.ttf.woff') format('woff'),
+        url('/fonts/OPTIMalouGothicBold.ttf.svg#OPTIMalouGothicBold') format('svg'),
+        url('/fonts/OPTIMalouGothicBold.ttf.eot'),
+        url('/fonts/OPTIMalouGothicBold.ttf.eot?#iefix') format('embedded-opentype'); 
     font-weight: normal;
     font-style: normal;
 }
