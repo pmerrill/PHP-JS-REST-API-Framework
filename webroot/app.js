@@ -149,8 +149,8 @@ $('document').ready(function(){
 
         //
         response: {
-            results: [],
-            status: {'code': 500, 'message': 'There was a problem.'},
+            results: {},
+            status: {},
             hasError: function() {
                 return !this.hasResults || this.hasErrorCode();
             },
