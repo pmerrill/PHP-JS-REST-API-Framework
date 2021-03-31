@@ -18,13 +18,24 @@
     }
 
     function buildQueryString($paramsArray){
-        return http_build_query($paramsArray);
+        $queryString = !empty($paramsArray) ? '?' . http_build_query($paramsArray) : '';
+        return $queryString;
     }
 
-    // Find the number of times a value occurs.
-    function findKeyValueOccurrences($array, $column) {
+    // Return the count of values from a single column.
+    function countColumn($array, $column) {
         $columnArray = array_column($array, $column);
         return array_count_values($columnArray);
+    }
+
+    function decodeResult($result){
+        return json_decode($result, true);
+    }
+
+    // Force output result consistency
+    // by mimicking a list if no root index is found.
+    function formatResult($result){
+        return !isset($result[0]) ? array($result) : $result;
     }
 
     function exitWithError($code, $message){
@@ -40,6 +51,6 @@
                 'code' => 200,
                 'message' => ''
             ],
-            'result' => []
+            'result' => null
         );
     }

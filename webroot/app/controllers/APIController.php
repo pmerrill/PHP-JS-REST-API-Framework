@@ -4,7 +4,7 @@
         private $requestMethod;
         public $isValidRequest;
 
-        public function setRequestMethod($requestMethod){
+        public function defineRequestMethod($requestMethod){
             $this->requestMethod = $requestMethod;
         }
 
@@ -41,7 +41,7 @@
         }
 
         public function compileEndpoint(){
-            $this->endpoint = $this->endpointHost . $this->endpointPath . '?' . $this->endpointQueryString;
+            $this->endpoint = $this->endpointHost . $this->endpointPath . $this->endpointQueryString;
         }
 
         public function start(){
@@ -56,11 +56,11 @@
             return curl_exec($this->apiCall);
         }
 
-        public function setHasError(){
+        public function errorCheck(){
             $this->hasError = $this->hasErrorCode();
         }
 
-        private function hasErrorCode(){
+        public function hasErrorCode(){
             return curl_errno($this->apiCall) > 0;
         }
 
@@ -73,13 +73,7 @@
         }
 
         public function sort($sortDirection){
-            $sortDirection === 'desc' ? $this->sortDesc() : $this->sortAsc();
-        }
-
-        private function sortDesc(){
-            usort($this->result, function($a, $b){
-                return isset($b[$this->sortKey]) ? $b[$this->sortKey] <=> $a[$this->sortKey] : false;
-            });
+            $sortDirection === 'asc' ? $this->sortAsc() : $this->sortDesc();
         }
 
         private function sortAsc(){
@@ -88,16 +82,14 @@
             });
         }
 
+        private function sortDesc(){
+            usort($this->result, function($a, $b){
+                return isset($b[$this->sortKey]) ? $b[$this->sortKey] <=> $a[$this->sortKey] : false;
+            });
+        }
+
         public function end(){
             curl_close($this->apiCall);
         }
 
-    }
-
-    class RestCountries extends APICall {
-        public $isAlphaCodeSearch;
-
-        public function setIsAlphaCode($searchTerm){
-            $this->isAlphaCodeSearch = strlen($searchTerm) <= 3;
-        }
     }

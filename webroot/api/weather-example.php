@@ -13,29 +13,18 @@
     $apiController->defineRequestMethod('GET');
     $apiController->validateRequest();
     if(!$apiController->isValidRequest){
-        exitWithError(400, 'There was a problem processing your search.');
+        exitWithError(400, 'There was a problem processing your request.');
     }
 
     $apiCall = new APICall;
-    $apiCall->setEndpointHost( 'https://restcountries.eu' );
 
-    // Process form input.
-    $country = findKeyValue($_GET, 'search');
-
-    $isAlphaCodeSearch = strlen($country) <= 3;
-    $pathPart = $isAlphaCodeSearch ? 'alpha' : 'name';
-    $apiCall->setEndpointPath( '/rest/v2/' . $pathPart . '/' . $country );
-
-    // Optional parameters
-    $parameters = ['fields' => 'alpha2Code;alpha3Code;flag;languages;name;population;region;subregion'];
-    $queryString = buildQueryString($parameters);
-    $apiCall->setEndpointQueryString($queryString);
-
+    $apiCall->setEndpointHost( 'https://www.metaweather.com' );
+    $apiCall->setEndpointPath( '/api/location/44418/' );
     $apiCall->compileEndpoint();
 
     $apiCall->start();
 
-    // Specify options.
+    // Specify API call requirements.
     $options = array(
         CURLOPT_URL => $apiCall->endpoint,
         CURLOPT_RETURNTRANSFER => TRUE,
@@ -48,23 +37,16 @@
     $result = formatResult($result);
     $apiCall->setResult($result);
 
+    // Important error checking.
     $apiCall->errorCheck();
     if($apiCall->hasError){
         $apiCall->end();
         exitWithError(404, 'We couldn\'t find anything for you.');
     }
 
-    // Optional sorting.
-    $apiCall->setSortKey('population');
-    $apiCall->sort('desc');
-
     $output = outputTemplate();
     $output['result'] = $apiCall->result;
-    $output['stats'] = [
-        'countries' => count($apiCall->result),
-        'regions' => countColumn($apiCall->result, 'region'),
-        'subregions' => countColumn($apiCall->result, 'subregion')
-    ];
+    
     echo json_encode($output);
 
     $apiCall->end();
