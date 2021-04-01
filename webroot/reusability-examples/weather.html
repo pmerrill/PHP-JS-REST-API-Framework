@@ -3,10 +3,10 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Countries Search</title>
+    <title>MetaWeather</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css" integrity="sha384-vSIIfh2YWi9wW0r9iZe7RJPrKwp6bG+s9QZMoITbCckVJqGCCRhc+ccxNcdpHuYu" crossorigin="anonymous">
-    <link rel="stylesheet/less" type="text/css" href="main.css">
+    <link rel="stylesheet/less" type="text/css" href="../main.css">
     <script src="//cdn.jsdelivr.net/npm/less@3.13" ></script>
   </head>
   <body class="bg-theme">
@@ -20,10 +20,10 @@
         <div class="collapse navbar-collapse" id="navbar-content">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="/">REST Countries</a>
+              <a class="nav-link" aria-current="page" href="/">REST Countries</a>
             </li>
             <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="/weather.html" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <a class="nav-link active dropdown-toggle" href="/weather.html" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 Reusability
               </a>
               <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
@@ -43,14 +43,11 @@
     </nav>
 
     <div class="container col-12 col-md-8 px-5 mx-auto mb-5">
-        <h2 class="fw-bold mb-3"><i class="fas fa-atlas"></i> Countries Search</h2>
+        <h2 class="fw-bold mb-3"><i class="fas fa-sun"></i> MetaWeather Example</h2>
         <div class="row bg-white box-shadow rounded p-4">
           
-          <div id="api" class="col-12" data-source="RESTCountries" data-endpoint="default">
-            <div class="input-group">
-              <input id="search" type="text" class="form-control p-3 fs-6" placeholder="Search by name, full name, or country code" autofocus>
-              <button id="submit" class="btn text-white p-3"><i class="fas fa-search fs-6"></i></button>
-            </div>
+          <div id="api" class="col-12" data-source="MetaWeather" data-endpoint="default" data-locationid="44418">
+              <button id="submit" class="btn text-white fw-bold p-3"><i class="fas fa-search fs-6"></i> Get Forecast</button>
           </div>
 
           <div id="messages" class="col-12 d-none"></div>
@@ -59,17 +56,19 @@
           
           <div id="info" class="col-12 mt-4">
             <h5 class="fw-bold">Info</h5>
-            <p>This example uses the <a href="https://restcountries.eu/" target="_blank">REST Countries API</a>.</p>
+            <p>This example uses the <a href="https://www.metaweather.com/api/#location" target="_blank">MetaWeather Location API</a> and retrieves the forecast of a specific location. Looking at the source code will show you that this API call reuses a very large portion of the code I wrote for the RESTCountries challenge.</p>
+            <p>The MetaWeather API accepts a "location ID", which is set as a data attribute of the #api element.</p>
+            <p>Click the button above to get London's forecast.</p>
 
             <h5 class="fw-bold">app.js</h5>
-            <p><code>RESTCountries</code> was added to the <code>source</code> object in app.js. This is where the endpoint and parameters are defined as well as how the output is compiled and rendered.</p>
-            <p>The #api element's endpoint data attribute defines which RESTCountries path we use. This example defines the path as <code>default</code>, which means that we'll use what's defined in the <code>source/RESTCountries/path/default</code> object in app.js.</p>
-            <p>The <code>default</code> path sets the endpoint to <code>/api/rest-countries.php</code>, creates the parameter(s), and sets up the <code>resultsFactory</code>.</p>
+            <p><code>MetaWeather</code> was added to the <code>source</code> object in app.js. This is where the endpoint and parameters are defined as well as how the output is compiled and rendered.</p>
+            <p>The #api element's endpoint data attribute defines which MetaWeather path we use. This example defines the path as <code>default</code>, which means that we'll use what's defined in the <code>source/MetaWeather/path/default</code> object in app.js.</p>
+            <p>The <code>default</code> path sets the endpoint to <code>/api/bonus-work/weather.php</code>, creates the parameter(s), and sets up the <code>resultsFactory</code>.</p>
             <p>When we render the results of the API call we use the <code>resultsFactory</code>. This lets us set a template for how the data gets compiled and rendered.</p>
 
-            <h5 class="fw-bold">/api/rest-countries.php</h5>
-            <p>This is the endpoint the <code>default</code> RESTCountries path sets in app.js. It performs a curl request through a series of object-oriented abstractions.</p>
-            <p><code>/api/rest-countries.php</code> uses the <code>APIController</code> class and its subclasses to make curl requests, process the results, and output them in a universal format.</p>
+            <h5 class="fw-bold">/api/bonus-work/weather.php</h5>
+            <p>This is the endpoint the <code>default</code> MetaWeather path sets in app.js. It performs a curl request through a series of object-oriented abstractions.</p>
+            <p><code>/api/bonus-work/weather.php</code> uses the <code>APIController</code> class and its subclasses to make curl requests, process the results, and output them in a universal format.</p>
             <p>The <code>APIController</code> class exists in <code>controllers/APIController.php</code> and has handy <code>$apiCall</code> methods such as <code>->start()</code>, <code>->setOptions()</code>, <code>->execute()</code>, <code>->end()</code>, <code>->errorCheck()</code>, and more.</p>
         </div>
 
@@ -78,6 +77,6 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
-    <script src="app.js"></script>
+    <script src="../app.js"></script>
   </body>
 </html>

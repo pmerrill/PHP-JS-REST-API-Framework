@@ -1,6 +1,6 @@
 <?php
-    require_once '../bootstrap.php';
-    require_once '../helpers/api_helper.php';
+    require_once '../../bootstrap.php';
+    require_once '../../helpers/api_helper.php';
     
     $headers = array(
         'Cache-Control: no-store, no-cache, must-revalidate, max-age=0',
@@ -19,7 +19,15 @@
     $apiCall = new APICall;
 
     $apiCall->setEndpointHost( 'https://www.metaweather.com' );
-    $apiCall->setEndpointPath( '/api/location/44418/' );
+    $apiCall->setEndpointPath( '/api/location/search/' );
+
+    // Optional parameters
+    $parameters = [
+        'query' => findKeyValue($_GET, 'query')
+    ];
+    $queryString = buildQueryString($parameters);
+    $apiCall->setEndpointQueryString($queryString);
+
     $apiCall->compileEndpoint();
 
     $apiCall->start();
