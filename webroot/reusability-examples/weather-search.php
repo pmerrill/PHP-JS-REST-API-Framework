@@ -18,7 +18,7 @@
         <div class="row bg-white box-shadow rounded p-4">
           
           <!-- Map to an API source in source.js by entering a source and endpoint data attribute. -->
-          <div id="api" data-source="MetaWeather" data-endpoint="search" class="col-12">
+          <div id="app" data-source="MetaWeather" data-endpoint="search" class="col-12">
             <div class="input-group box-shadow">
               <input id="search" type="text" class="form-control p-3 fs-6" placeholder="Search for a city by name (Ex: Madrid)" autofocus>
               <button id="submit" class="btn text-white p-3"><i class="fas fa-search fs-6"></i></button>
@@ -29,7 +29,7 @@
           <div id="messages" class="col-12 d-none"></div>
 
           <!-- Display API results. -->
-          <div id="results" class="col-12 mt-3 d-none"></div>
+          <div id="result" class="display col-12 mt-3 d-none"></div>
           
           <div id="details" class="col-12 mt-4">
             <h5 class="fw-bold">Info</h5>

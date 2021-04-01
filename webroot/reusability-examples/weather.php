@@ -18,7 +18,7 @@
         <div class="row bg-white box-shadow rounded p-4">
           
           <!-- Map to an API source in source.js by entering a source and endpoint data attribute. -->
-          <div id="api" data-source="MetaWeather" data-endpoint="default" data-locationid="44418" class="col-12">
+          <div id="app" data-source="MetaWeather" data-endpoint="default" data-locationid="44418" class="col-12">
               <button id="submit" class="btn text-white fw-bold p-3"><i class="fas fa-search fs-6"></i> Get Forecast</button>
           </div>
 
@@ -26,7 +26,7 @@
           <div id="messages" class="col-12 d-none"></div>
 
           <!-- Display API results. -->
-          <div id="results" class="col-12 mt-3 d-none"></div>
+          <div id="result" class="display col-12 mt-3 d-none"></div>
           
           <div id="details" class="col-12 mt-4">
             <h5 class="fw-bold">Info</h5>

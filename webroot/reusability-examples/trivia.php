@@ -9,7 +9,7 @@
     <link rel="stylesheet/less" type="text/css" href="../main.css">
     <script src="//cdn.jsdelivr.net/npm/less@3.13" ></script>
   </head>
-  <body class="bg-theme" onload="api.call()">
+  <body class="bg-theme" onload="app.call()">
 
     <?php require_once('../includes/navigation.html'); ?>
 
@@ -18,13 +18,13 @@
         <div class="row bg-white box-shadow rounded p-4">
           
           <!-- Map to an API source in source.js by entering a source and endpoint data attribute. -->
-          <div id="api" data-source="OpenTrivia" data-endpoint="default" class="col-12"></div>
+          <div id="app" data-source="OpenTrivia" data-endpoint="default" class="col-12"></div>
 
           <!-- Display API response and error handling messages. -->
           <div id="messages" class="col-12 d-none"></div>
 
           <!-- Display API results. -->
-          <div id="results" class="col-12 mt-3 d-none"></div>
+          <div id="result" class="display col-12 mt-3 d-none"></div>
           
           <div id="details" class="col-12 mt-4">
             <h5 class="fw-bold">Info</h5>
