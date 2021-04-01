@@ -133,6 +133,9 @@ const display = {
         // Removes any endpoint data that is visible in the UI.
         emptyResults: function(){},
         
+        // Removes messages from the UI.
+        emptyMessages: function(){},
+        
         // Change a UI element to a spinner icon.
         loading: function(element){},
         
@@ -183,6 +186,7 @@ const display = {
         loading: function(){
             display.render.loading(display.submitButton);
             display.render.emptyResults();
+            display.render.emptyMessages();
             display.render.disabledForm();
         },
         doneLoading: function(){

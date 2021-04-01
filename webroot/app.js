@@ -99,6 +99,9 @@ const display = {
             $('.display').addClass('d-none');
             $('#messages').empty().append('<div class="error text-danger mt-2">' + message + '</div>').removeClass('d-none');
         },
+        emptyMessages: function(){
+            $('#messages').empty();
+        },
         emptyResults: function(){
             return $('.display').addClass('d-none').empty();
         },
@@ -132,12 +135,15 @@ const display = {
                 }
 
             }
+
+            
         }
     },
     state: {
         loading: function(){
             display.render.loading(display.submitButton);
             display.render.emptyResults();
+            display.render.emptyMessages();
             display.render.disabledForm();
         },
         doneLoading: function(){

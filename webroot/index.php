@@ -32,7 +32,7 @@
           <div id="result" class="display col-12 mt-3 d-none"></div>
 
           <!-- Display any extra info included in the API response. -->
-          <div id="info" class="col-12 mt-3 d-none"></div>
+          <div id="info" class="display col-12 mt-3 d-none"></div>
           
           <div id="details" class="col-12 mt-4">
             <h5 class="fw-bold">Info</h5>
