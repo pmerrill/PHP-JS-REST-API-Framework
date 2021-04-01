@@ -11,64 +11,42 @@
   </head>
   <body class="bg-theme">
 
-    <nav class="navbar navbar-expand-lg navbar-light navbar-top bg-white mb-5 fw-bold">
-      <div class="container col-12 col-md-8">
-        <a class="navbar-brand fw-bold" href="#">INFOSEC</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-content" aria-controls="navbar-content" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbar-content">
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="/">REST Countries</a>
-            </li>
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="/weather.html" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                Reusability
-              </a>
-              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <li><a class="dropdown-item" href="/reusability-examples/weather.html">MetaWeather</a></li>
-                <li><a class="dropdown-item" href="/reusability-examples/weather-search.html">MetaWeather Search</a></li>
-                <li><a class="dropdown-item" href="/reusability-examples/trivia.html">Random Trivia</a></li>
-              </ul>
-            </li>
-          </ul>
-          <ul class="navbar-nav d-flex">
-            <li class="nav-item">
-              <a class="nav-link" href="https://github.com/pmerrill/infosec" target="_blank" rel="nofollow"><i class="fab fa-github fs-5 fw-bold"></i></a>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </nav>
+    <?php require_once('includes/navigation.html'); ?>
 
     <div class="container col-12 col-md-8 px-5 mx-auto mb-5">
         <h2 class="fw-bold mb-3"><i class="fas fa-atlas"></i> Countries Search</h2>
         <div class="row bg-white box-shadow rounded p-4">
           
-          <div id="api" class="col-12" data-source="RESTCountries" data-endpoint="default">
-            <div class="input-group">
+          <!-- Map to an API source in source.js by entering a source and endpoint data attribute. -->
+          <div id="api" data-source="RESTCountries" data-endpoint="default" class="col-12">
+            <div class="input-group box-shadow">
               <input id="search" type="text" class="form-control p-3 fs-6" placeholder="Search by name, full name, or country code" autofocus>
               <button id="submit" class="btn text-white p-3"><i class="fas fa-search fs-6"></i></button>
             </div>
           </div>
 
+          <!-- Display API response and error handling messages. -->
           <div id="messages" class="col-12 d-none"></div>
 
+          <!-- Display API results. -->
           <div id="results" class="col-12 mt-3 d-none"></div>
+
+          <!-- Display any extra info included in the API response. -->
+          <div id="info" class="col-12 mt-3 d-none"></div>
           
-          <div id="info" class="col-12 mt-4">
+          <div id="details" class="col-12 mt-4">
             <h5 class="fw-bold">Info</h5>
             <p>This example uses the <a href="https://restcountries.eu/" target="_blank">REST Countries API</a>.</p>
 
-            <h5 class="fw-bold">app.js</h5>
-            <p><code>RESTCountries</code> was added to the <code>source</code> object in app.js. This is where the endpoint and parameters are defined as well as how the output is compiled and rendered.</p>
-            <p>The #api element's endpoint data attribute defines which RESTCountries path we use. This example defines the path as <code>default</code>, which means that we'll use what's defined in the <code>source/RESTCountries/path/default</code> object in app.js.</p>
-            <p>The <code>default</code> path sets the endpoint to <code>/api/rest-countries.php</code>, creates the parameter(s), and sets up the <code>resultsFactory</code>.</p>
+            <h5 class="fw-bold">source.js</h5>
+            <p><code>RESTCountries</code> was added to the <code>source</code> object in source.js. This is where the endpoint and parameters are defined as well as how the output is compiled and rendered.</p>
+            <p>The #api element's endpoint data attribute defines which RESTCountries path we use. This example defines the path as <code>default</code>, which means that we'll use what's defined in the <code>source/RESTCountries/path/default</code> object in source.js.</p>
+            <p>The <code>default</code> path sets the endpoint to <code>/api/rest-countries.php</code>, creates the parameter(s), sets up the <code>resultsFactory</code>, and sets up the <code>infoFactory</code>.</p>
             <p>When we render the results of the API call we use the <code>resultsFactory</code>. This lets us set a template for how the data gets compiled and rendered.</p>
+            <p>The display that shows the number of countries, a list of regions, and a list of subregions is generated by the <code>infoFactory</code>.</p>
 
             <h5 class="fw-bold">/api/rest-countries.php</h5>
-            <p>This is the endpoint the <code>default</code> RESTCountries path sets in app.js. It performs a curl request through a series of object-oriented abstractions.</p>
+            <p>This is the endpoint the <code>default</code> RESTCountries path sets in source.js. It performs a curl request through a series of object-oriented abstractions.</p>
             <p><code>/api/rest-countries.php</code> uses the <code>APIController</code> class and its subclasses to make curl requests, process the results, and output them in a universal format.</p>
             <p>The <code>APIController</code> class exists in <code>controllers/APIController.php</code> and has handy <code>$apiCall</code> methods such as <code>->start()</code>, <code>->setOptions()</code>, <code>->execute()</code>, <code>->end()</code>, <code>->errorCheck()</code>, and more.</p>
         </div>

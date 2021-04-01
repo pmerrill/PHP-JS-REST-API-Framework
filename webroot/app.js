@@ -11,13 +11,10 @@ $('document').ready(function(){
         display.submitButton = $(this);
 
         //
-        const apiSource = source[api.source].path[api.endpoint];
+        source[api.source].path[api.endpoint].param.default.setValue();
 
         //
-        apiSource.param.default.setValue();
-
-        //
-        let isValid = api.checkSourceParam.isValid( apiSource.param.default );
+        let isValid = api.checkSourceParam.isValid( source[api.source].path[api.endpoint].param.default );
 
         if(!isValid) {
             display.render.error('<b>Oops!</b> Looks like you forgot to enter something. <i class="far fa-smile-wink"></i>');
@@ -72,14 +69,16 @@ const api = {
         .done(function(response) {
 
             //
-            api.response.results = response['result'];
             api.response.status = response['status'];
+            api.response.results = response['result'];
+            api.response.info = response['info'];
         
             //
             if (api.response.hasError()) {
                 display.render.error('<i class="fas fa-exclamation-circle"></i> <b>Uh oh!</b> ' + api.response.status['message'])
             } else {
                 display.render.results();
+                display.render.info();
             }
 
         })
@@ -105,15 +104,20 @@ const api = {
 
     //
     response: {
-        results: {},
         status: {},
+        results: {},
+        info: {},
         hasError: function() {
-            let hasError = !this.hasValidRoot();
+            let hasError = this.isNull();
+            hasError = !hasError ? this.hasInvalidRoot() : hasError;
             hasError = !hasError ? this.hasErrorCode() : hasError;
             return hasError;
         },
-        hasValidRoot: function(){
-            return Object.keys(this.results[0]).length > 0;
+        isNull: function(){
+            return this.results === null;
+        },
+        hasInvalidRoot: function(){
+            return Object.keys(this.results[0]).length === 0;
         },
         hasErrorCode: function(){
             return this.status['code'] !== this.successStatusCode;
@@ -132,13 +136,17 @@ const display = {
     render: {
         error: function(message){
             $('#results').addClass('d-none');
+            $('#info').addClass('d-none');
             $('#messages').empty().append('<div class="error text-danger mt-2">' + message + '</div>').removeClass('d-none');
         },
         loading: function(element){
-            return element.html('<div class="spinner-border spinner-border-sm"" role="status"><span class="visually-hidden">Loading...</span></div>');
+            return element !== null ? element.html('<div class="spinner-border spinner-border-sm"" role="status"><span class="visually-hidden">Loading...</span></div>') : true;
         },
         emptyMessages: function(){
             return $('#messages').empty();
+        },
+        emptyInfo: function(){
+            return $('#info').empty();
         },
         disabledForm: function(){
             return $('#search').attr('disabled', true);
@@ -147,7 +155,7 @@ const display = {
             return $('#results').addClass('d-none').empty();
         },
         searchIcon: function(element){
-            return element.html('<i class="fas fa-search fs-6"></i>');
+            return element !== null ? element.html('<i class="fas fa-search fs-6"></i>') : true;
         },
         enabledForm: function(){
             return $('#search').attr('disabled', false);
@@ -164,18 +172,35 @@ const display = {
             }
 
             $('#results').removeClass('d-none');
+        },
+
+        //
+        info: function(){
+            let apiSource = source[api.source].path[api.endpoint];
+            
+            for(const element in api.response.info){
+                $('#info').append( apiSource.infoFactory(element) );
+            }
+
+            $('#info').removeClass('d-none');
         }
     },
     state: {
         loading: function(){
             display.render.loading(display.submitButton);
             display.render.emptyMessages();
+            display.render.emptyInfo();
             display.render.disabledForm();
             display.render.emptyResults();
         },
         doneLoading: function(){
             display.render.searchIcon(display.submitButton);
             display.render.enabledForm();
+        }
+    },
+    helper: {
+        numberWithCommas: function(number){
+            return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
         }
     }
 }

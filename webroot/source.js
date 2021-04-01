@@ -27,36 +27,69 @@ const source = {
                 
                 //
                 resultsFactory: function(element) {
-                    return this.generate(element);
+                    return this.generateCountry(element);
                 },
-                generate: function(element){
+                generateCountry: function(element){
                     let output = '';
-                    output += '<div class="list-group">';
+                    output += '<div class="list-group mb-3">';
                     output += '     <div class="list-group-item list-group-item-action">';
-                    output += '         <div class="d-flex w-100 justify-content-between">';
-                    output += '             <div class="col-12 col-md-2">';
-                    output += '                 <img src="' + element['flag'] + '" class="w-75">';
+                    output += '         <div class="d-md-flex w-100 justify-content-between">';
+                    output += '             <div class="col-12 col-md-2 mb-3 mb-md-0">';
+                    output += '                 <img src="' + element['flag'] + '" class="w-75 rounded">';
                     output += '             </div>';
                     output += '             <div class="col-12 col-md-10">';
-                    output += '                 <h5 class="mb-1">' + element['name'] + '</h5>';
-                    output += '                 <strong>alpha2Code</strong>: ';
-                    output += '                 <small>' + element['alpha2Code'] + '</small><br/>';
-                    output += '                 <strong>alpha2Code</strong>: ';
-                    output += '                 <small>' + element['alpha3Code'] + '</small><br/>';
-                    output += '                 <strong>Region</strong>: ';
-                    output += '                 <small>' + element['region'] + '</small><br/>';
-                    output += '                 <strong>Subregion</strong>: ';
-                    output += '                 <small>' + element['subregion'] + '</small><br/>';
-                    output += '                 <strong>Population</strong>: ';
-                    output += '                 <small>' + element['population'] + '</small><br/>';
-                    output += '                 <strong>Language(s)</strong>: ';
+                    output += '                 <h5 class="fw-bold mb-1">' + element['name'] + '</h5>';
+                    output += '                 <div class="table-responsive">';
+                    output += '                     <table class="table">';
+                    output += '                         <thead>';
+                    output += '                             <tr>';
+                    output += '                                 <th>Region</th>';
+                    output += '                                 <th>Subregion</th>';
+                    output += '                                 <th>Population</th>';
+                    output += '                                 <th>Language(s)</th>';
+                    output += '                                 <th>Alpha Codes</th>';
+                    output += '                             </tr>';
+                    output += '                         </thead>';
+                    output += '                         <tbody>';
+                    output += '                             <tr>';
+                    output += '                                 <td>' + element['region'] + '</td>';
+                    output += '                                 <td>' + element['subregion'] + '</td>';
+                    output += '                                 <td>' + display.helper.numberWithCommas(element['population']) + '</td>';
+                    output += '                                 <td>';
                     for(const language of element['languages']){
-                        output += '             <small>' + language['name'] + '</small><br/>';
+                        output += '                                 <small>' + language['name'] + '</small><br/>';
                     }
+                    output += '                                 </td>';
+                    output += '                                 <td>';
+                    output += '                                     <small><strong>Alpha 2</strong>: ' + element['alpha2Code'] + '</small><br/>';
+                    output += '                                     <small><strong>Alpha 3</strong>: ' + element['alpha3Code'] + '</small>';
+                    output += '                                 </td>';
+                    output += '                             </tr>';
+                    output += '                         </tbody>';
+                    output += '                     </table>';
+                    output += '                 </div>';
                     output += '             </div>';
                     output += '         </div>';
                     output += '     </div>';
                     output += '</div>';
+                    return output;
+                },
+                
+                //
+                infoFactory: function(element) {
+                    return this.generateInfo(element);
+                },
+                generateInfo: function(element){
+                    let output = '<h5 class="mt-3 fw-bold capitalize">' + element + '</h5> ';
+                
+                    if(Object.keys(api.response.info[element]).length > 0){
+                        for(const property in api.response.info[element]){
+                            output += property + ': ' + api.response.info[element][property] + '<br/>';
+                        }
+                    } else {
+                        output += api.response.info[element];
+                    }
+
                     return output;
                 }
             }
@@ -102,7 +135,7 @@ const source = {
                     output += '                         <th>Min Temp</th>';
                     output += '                         <th>Max Temp</th>';
                     output += '                         <th>Weather</th>';
-                    output += '                     <tr>';
+                    output += '                     </tr>';
                     output += '                 </thead>';
                     output += '                 <tbody>';
                     
@@ -112,7 +145,7 @@ const source = {
                         output += '                     <td>' + Math.round(day['min_temp']) + '</td>';
                         output += '                     <td>' + Math.round(day['max_temp']) + '</td>';
                         output += '                     <td>' + day['weather_state_name'] + '</td>';
-                        output += '                 <tr>';
+                        output += '                 </tr>';
                     }
 
                     output += '                 </tbody>';
@@ -174,10 +207,7 @@ const source = {
                 param: {
                     default: {
                         name: 'amount',
-                        value: 0,
-                        setValue: function(){
-                            this.value = $('#api').data('amount');
-                        }
+                        value: 10
                     }
                 },
                 

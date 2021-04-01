@@ -11,65 +11,39 @@
   </head>
   <body class="bg-theme">
 
-    <nav class="navbar navbar-expand-lg navbar-light navbar-top bg-white mb-5 fw-bold">
-      <div class="container col-12 col-md-8">
-        <a class="navbar-brand fw-bold" href="#">INFOSEC</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-content" aria-controls="navbar-content" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbar-content">
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item">
-              <a class="nav-link" aria-current="page" href="/">REST Countries</a>
-            </li>
-            <li class="nav-item dropdown">
-              <a class="nav-link active dropdown-toggle" href="/weather.html" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                Reusability
-              </a>
-              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <li><a class="dropdown-item" href="/reusability-examples/weather.html">MetaWeather</a></li>
-                <li><a class="dropdown-item" href="/reusability-examples/weather-search.html">MetaWeather Search</a></li>
-                <li><a class="dropdown-item" href="/reusability-examples/trivia.html">Random Trivia</a></li>
-              </ul>
-            </li>
-          </ul>
-          <ul class="navbar-nav d-flex">
-            <li class="nav-item">
-              <a class="nav-link" href="https://github.com/pmerrill/infosec" target="_blank" rel="nofollow"><i class="fab fa-github fs-5 fw-bold"></i></a>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </nav>
+    <?php require_once('../includes/navigation.html'); ?>
 
     <div class="container col-12 col-md-8 px-5 mx-auto mb-5">
         <h2 class="fw-bold mb-3"><i class="fas fa-sun"></i> MetaWeather Search</h2>
         <div class="row bg-white box-shadow rounded p-4">
           
-          <div id="api" class="col-12" data-source="MetaWeather" data-endpoint="search">
-            <div class="input-group">
-              <input id="search" type="text" class="form-control p-3 fs-6" placeholder="Search for a city by name (Ex: madrid)" autofocus>
+          <!-- Map to an API source in source.js by entering a source and endpoint data attribute. -->
+          <div id="api" data-source="MetaWeather" data-endpoint="search" class="col-12">
+            <div class="input-group box-shadow">
+              <input id="search" type="text" class="form-control p-3 fs-6" placeholder="Search for a city by name (Ex: Madrid)" autofocus>
               <button id="submit" class="btn text-white p-3"><i class="fas fa-search fs-6"></i></button>
             </div>
           </div>
 
+          <!-- Display API response and error handling messages. -->
           <div id="messages" class="col-12 d-none"></div>
 
+          <!-- Display API results. -->
           <div id="results" class="col-12 mt-3 d-none"></div>
           
-          <div id="info" class="col-12 mt-4">
+          <div id="details" class="col-12 mt-4">
             <h5 class="fw-bold">Info</h5>
             <p>This example uses the <a href="https://www.metaweather.com/api/#locationsearch" target="_blank">MetaWeather Location Search API</a> and searches for locations by name. The API returns basic info such as latitute, longitude, and WOEID. Looking at the source code will show you that this API call reuses a very large portion of the code I wrote for the RESTCountries challenge.</p>
             <p>The MetaWeather API accepts a <code>query</code> from the input above.</p>
 
-            <h5 class="fw-bold">app.js</h5>
-            <p><code>MetaWeather</code> was added to the <code>source</code> object in app.js. This is where the endpoint and parameters are defined as well as how the output is compiled and rendered.</p>
-            <p>The #api element's endpoint data attribute defines which MetaWeather path we use. This example defines the path as <code>search</code>, which means that we'll use what's defined in the <code>source/MetaWeather/path/search</code> object in app.js.</p>
+            <h5 class="fw-bold">source.js</h5>
+            <p><code>MetaWeather</code> was added to the <code>source</code> object in source.js. This is where the endpoint and parameters are defined as well as how the output is compiled and rendered.</p>
+            <p>The #api element's endpoint data attribute defines which MetaWeather path we use. This example defines the path as <code>search</code>, which means that we'll use what's defined in the <code>source/MetaWeather/path/search</code> object in source.js.</p>
             <p>The <code>search</code> path sets the endpoint to <code>/api/bonus-work/weather-search.php</code>, creates the parameter(s), and sets up the <code>resultsFactory</code>.</p>
             <p>When we render the results of the API call we use the <code>resultsFactory</code>. This lets us set a template for how the data gets compiled and rendered.</p>
 
             <h5 class="fw-bold">/api/bonus-work/weather-search.php</h5>
-            <p>This is the endpoint the <code>search</code> MetaWeather path sets in app.js. It performs a curl request through a series of object-oriented abstractions.</p>
+            <p>This is the endpoint the <code>search</code> MetaWeather path sets in source.js. It performs a curl request through a series of object-oriented abstractions.</p>
             <p><code>/api/bonus-work/weather-search.php</code> uses the <code>APIController</code> class and its subclasses to make curl requests, process the results, and output them in a universal format.</p>
             <p>The <code>APIController</code> class exists in <code>controllers/APIController.php</code> and has handy <code>$apiCall</code> methods such as <code>->start()</code>, <code>->setOptions()</code>, <code>->execute()</code>, <code>->end()</code>, <code>->errorCheck()</code>, and more.</p>
         </div>

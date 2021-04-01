@@ -20,5 +20,8 @@ After starting the server go to:
 http://localhost:8765/index.html  
 ```
 
-If you setup the http server differently, please provide direction on how to start it
-in your submitted project's readme file.
+## Information
+There are 2 ways to make an API call with this framework.
+    1. When an element with an ID of "submit" is clicked.
+    2. By adding onload="api.call()" to the body element.
+        /reusability-examples/trivia.html.

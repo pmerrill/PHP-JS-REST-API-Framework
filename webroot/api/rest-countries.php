@@ -63,7 +63,7 @@
     $output = outputTemplate();
     $output['result'] = $apiCall->result;
     $output['info'] = [
-        'items' => count($apiCall->result),
+        'countries' => count($apiCall->result),
         'regions' => countColumn($apiCall->result, 'region'),
         'subregions' => countColumn($apiCall->result, 'subregion')
     ];
