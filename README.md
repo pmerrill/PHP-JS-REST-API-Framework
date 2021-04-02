@@ -26,6 +26,7 @@ Continue reading to learn more!
 		- [source.js](#documentation-source-js)
 	- [5. Extending](#extending)
 		- [Adding a new data source](#extending-add-new-source)
+    - [Adding an internal data source](#extending-add-internal-source)
 
 <a name="overview"></a>
 ## Scripts
@@ -33,7 +34,7 @@ Continue reading to learn more!
 <a name="scripts-source"></a>
 **/[source.js](https://github.com/pmerrill/infosec/blob/master/webroot/source.js)**:
 
-*Contains all API "source" definitions. This includes endpoints, parameters, factories for generating UI components, and an occasional helper function.*
+Contains all API "source" definitions. This includes endpoints, parameters, factories for generating UI components, and an occasional helper function.
 
 - [Documentation](#documentation-source-js)
 
@@ -42,7 +43,7 @@ Continue reading to learn more!
 <a name="scripts-app"></a>
 **/[app.js](https://github.com/pmerrill/infosec/blob/master/webroot/app.js)**
 
-*Controls the UI, makes calls to source endpoints, passes data from the endpoint through **[source.js](https://github.com/pmerrill/infosec/blob/master/webroot/source.js)** and out to the UI.*
+Controls the UI, makes calls to source endpoints, passes data from the endpoint through **[source.js](https://github.com/pmerrill/infosec/blob/master/webroot/source.js)** and out to the UI.
 
 - [Documentation](#documentation-app-js)
 
@@ -51,7 +52,7 @@ Continue reading to learn more!
 <a name="scripts-APIController"></a>
 **/[controllers/APIController.php](https://github.com/pmerrill/infosec/blob/master/webroot/controllers/APIController.php)**
 
-*Contains cURL abstractions and data processing methods.*
+Contains cURL abstractions and data processing methods.
 
 - [Documentation](#documentation-APIController)
 
@@ -60,7 +61,7 @@ Continue reading to learn more!
 <a name="scripts-api-folder"></a>
 **/[api/...](https://github.com/pmerrill/infosec/tree/master/webroot/api)**
 
-*Scripts in this folder are the endpoints defined in **[source.js](https://github.com/pmerrill/infosec/blob/master/webroot/source.js)**. The objects these endpoints output should be mapped to a **[source.js](https://github.com/pmerrill/infosec/blob/master/webroot/source.js)** response object. More about this below.*
+Scripts in this folder are the endpoints defined in **[source.js](https://github.com/pmerrill/infosec/blob/master/webroot/source.js)**. The objects these endpoints output should be mapped to a **[source.js](https://github.com/pmerrill/infosec/blob/master/webroot/source.js)** response object. More about this below.
 
 - [Documentation](#documentation-api-endpoint)
 
@@ -71,7 +72,6 @@ You may see me make repeated references to a "source" or a "source path".
 
 Here's what that means:
 
-<br/>
 
 <a name="terminology-source"></a>
 **source** = Top-level object in **[source.js](https://github.com/pmerrill/infosec/blob/master/webroot/source.js)**. In the example below **RESTCountries** would be the source.
@@ -224,7 +224,7 @@ class APICall extends APIController {
 
 	// source.js defines each endpoint's parameters.
 	// These parameters are formatted into a key-value object in app.js and passed to the /api endpoint.
-	// The /api endpoint takes the parameters object and converts it into a string.
+	// The /api endpoint takes the parameters and converts it into a string.
 	// Ex: ?fields=name;population;region
 	public function setEndpointQueryString($queryString){}
 
@@ -288,7 +288,8 @@ class APICall extends APIController {
 - Implements [controllers/APIController.php](https://github.com/pmerrill/infosec/blob/master/webroot/controllers/APIController.php).<br/>
   - Abstract cURL methods such as ->start(), ->execute(), ->end(). <br/>
   - Uniform API response formatting. <br/>
-  - Whatever we want the UI to display must be entered in the **[source.js](https://github.com/pmerrill/infosec/blob/master/webroot/source.js)** response property object.
+  - The output should be mapped to response property objects in **[source.js](https://github.com/pmerrill/infosec/blob/master/webroot/source.js)**.
+    - [More info](#ui-js)
  
  ```php
   // Require the autoloader and helper functions
@@ -394,11 +395,12 @@ class APICall extends APIController {
 
 - UI controller. <br/>
 - Handles API calls and generates the UI based on the response. <br/>
-- API calls can be made through the click of a UI element with a **submit** ID. ```<button id="submit">```<br/>
-- Perform an API call when the page loads by adding **```onload="app.call()```"** to the ```<body>``` tag. <br/>
-	- See [/reusability-examples/trivia.php](https://github.com/pmerrill/infosec/blob/master/webroot/reusability-examples/trivia.php). <br/>
-	- ```<body onload="app.call()">```
-- Relies on **[source.js](https://github.com/pmerrill/infosec/blob/master/webroot/source.js)** for API-specifics. <br/>
+- API calls can be made in 2 ways. <br/>
+  - Through the click of a UI element with a **submit** ID. ```<button id="submit">```<br/>
+  - When the page loads. Add **```onload="app.call()```"** to the ```<body>``` tag. <br/>
+	  - See [/reusability-examples/trivia.php](https://github.com/pmerrill/infosec/blob/master/webroot/reusability-examples/trivia.php). <br/>
+	  - ```<body onload="app.call()">```
+- Relies on **[source.js](https://github.com/pmerrill/infosec/blob/master/webroot/source.js)** for API-specific definitions such as endpoint to hit, parameters to use, and rules for building the UI. <br/>
 
 <a name="documentation-app-js-ready"></a>
 ```javascript
@@ -498,8 +500,7 @@ const app {
         // Get the source parameters object.
         let sourceParams = source[app.source].path[app.path].param;
         
-        // Iterate over the source's parameters and create an object...
-        // that will be passed to the endpoint.
+        // Iterate over the source's parameters and create an object that will be passed to the endpoint.
         for(const property in sourceParams){
             let name = sourceParams[property].name;
             output[name] = sourceParams[property].value;
@@ -526,7 +527,7 @@ const display = {
         error: function(message){},
         
         // Removes any endpoint data that is visible in the UI.
-        emptyResults: function(){},
+        emptyDisplay: function(){},
         
         // Removes messages from the UI.
         emptyMessages: function(){},
@@ -567,9 +568,9 @@ const display = {
                 
                     // Add to the UI and make it visible to the user.
                     // An element in the UI must have an ID that matches the name of this property.
-                    // <div id="example" class="display"></div> will show what's in the...
+                    // <div id="app-example" class="display"></div> will show what's in the...
                     // "example" object in the endpoint response. 
-                    $('#' + property).append(output).removeClass('d-none');
+                    $('#app-' + property).append(output).removeClass('d-none');
                 }
 
             }
@@ -580,7 +581,7 @@ const display = {
     state: {
         loading: function(){
             display.render.loading(display.submitButton);
-            display.render.emptyResults();
+            display.render.emptyDisplay();
             display.render.emptyMessages();
             display.render.disabledForm();
         },
@@ -656,17 +657,12 @@ RESTCountries: {
         // This should match a key provided by the api/[endpoint].php response.
         result: {
         
-          // The default value should be null.
-          // app.js updates this from app.call(), which if $get is done calls display.render.output(response).
-          // display.render.output(response) iterates over the source's response objects and updates each...
-          // one that is found in the endpoint's response.
+          // This is set by app.js after a call is done.
+          // app.js iterates over the endpoint's response and updates all matching source.js response object values.
           value: null,
           
-          // Very important!
-	        // Iterate over this.value and return an output.
-          // display.render.ouput() in app.js calls this function.
-          // The output is appended to the UI element with the same ID...
-          // as the name of the parent object. <div id="result"></div>
+          // app.js uses this to build the UI for this response object.
+          // It appends the output to a specific UI element, which is <div id="app-result"></div> in this case.
           build: function(){
             let output = '';
             for(const element of this.value){
@@ -691,6 +687,7 @@ RESTCountries: {
 <br/>
 <br/>
 
+<a name="ui"></a>
 **UI**
 
 - Must have an **app** ID element that defines which **[source.js](https://github.com/pmerrill/infosec/blob/master/webroot/source.js)** source and path we use.
@@ -700,21 +697,22 @@ RESTCountries: {
 <div id="app" data-source="RESTCountries" data-path="default"></div>
 ```
 
-- Must have an element with an ID that matches whatever data object you want to display. This is case-sensitive and must match an object in the **[api/[endpoint].php](https://github.com/pmerrill/infosec/tree/master/webroot/api)** response as well as a response object in **[source.js](https://github.com/pmerrill/infosec/blob/master/webroot/source.js)**.
+- Must have an element with an ID that matches whatever data object you want to display. This element must have a **display class** and the ID must start with **app-**. It is case-sensitive and must match an object in the **[api/[endpoint].php](https://github.com/pmerrill/infosec/tree/master/webroot/api)** response as well as a response object in **[source.js](https://github.com/pmerrill/infosec/blob/master/webroot/source.js)**.
 
 ```html
-<div id="result" class="display"></div>
+<div id="app-result" class="display"></div>
 ```
 
 - Those 2 UI elements tell **[app.js](https://github.com/pmerrill/infosec/blob/master/webroot/app.js)** to interact with ```RESTCountries.path.default.response.result``` in **[source.js](https://github.com/pmerrill/infosec/blob/master/webroot/source.js)** (as defined below).
 
+<a name="ui-js"></a>
 ```javascript
 RESTCountries: {
   path: {
     default: {
       endpoint: '',
-      response {
-        result {
+      response: {
+        result: {
           value: null,
           build: function(){}
         }
@@ -726,7 +724,7 @@ RESTCountries: {
 
 <br/>
 
-- This also means that if the endpoint responds with something like the example below the ```<div id="result">``` UI element will be populated with what's in the ```result``` array as long as ```build()``` in **[source.js](https://github.com/pmerrill/infosec/blob/master/webroot/source.js)** processes it and returns HTML through [app.js](https://github.com/pmerrill/infosec/blob/master/webroot/app.js) to the UI.
+- This also means that if the endpoint responds with something like the example below the ```<div id="app-result">``` UI element will be populated with what's in the ```result``` array as long as ```build()``` in **[source.js](https://github.com/pmerrill/infosec/blob/master/webroot/source.js)** processes it and returns HTML through [app.js](https://github.com/pmerrill/infosec/blob/master/webroot/app.js) to the UI.
 
 **[api/[endpoint].php](https://github.com/pmerrill/infosec/tree/master/webroot/api)**
 ```php
@@ -750,17 +748,17 @@ Add a new top-level property to **[source.js](https://github.com/pmerrill/infose
 
 ```javascript
 CatFacts: {
-	path: {
+  path: {
     default: {
       endpoint: '/api/cat.php',
       response: {
-          result: {
+        result: {
           value: null,
           build: function(){
             let output = '';
             for(const element of this.value){
               if(display.helper.hasKeys(element)){
-                  output +=  '<p>' + element['text'] + '</p>';
+                output +=  '<p>' + element['text'] + '</p>';
               }
             }
             return output;
@@ -772,7 +770,7 @@ CatFacts: {
         }
       }
     }
-	}
+  }
 }
 ```
 
@@ -851,9 +849,9 @@ Paste this template:
   <body class="bg-theme" onload="app.call()">
 
     <div class="container col-12 col-md-8 px-5 mx-auto mb-5">
-          <div id="app" data-source="CatFacts" data-endpoint="default" class="col-12"></div>
+          <div id="app" data-source="CatFacts" data-path="default" class="col-12"></div>
           <div id="messages" class="col-12 d-none"></div>
-          <div id="result" class="display col-12 mt-3 d-none"></div>
+          <div id="app-result" class="display col-12 mt-3 d-none"></div>
         </div>
     </div>
 
@@ -866,6 +864,46 @@ Paste this template:
 
 <br/>
 
-*Notice ```<body onload="app.call()">```? That tells **[app.js](https://github.com/pmerrill/infosec/blob/master/webroot/app.js)** to make the call to the ```endpoint``` we defined in the default path of the ```CatFacts``` object in **[source.js](https://github.com/pmerrill/infosec/blob/master/webroot/source.js)**.*
+*Notice ```<body onload="app.call()">```? That tells **[app.js](https://github.com/pmerrill/infosec/blob/master/webroot/app.js)** to make the call to the ```endpoint``` we defined in the ```default path``` of the ```CatFacts``` object in **[source.js](https://github.com/pmerrill/infosec/blob/master/webroot/source.js)**.*
 
 Now go to [localhost:8765/cat.html](http://localhost:8765/cat.html) to see some random cat facts. :smile_cat:
+
+<br/>
+
+<a name="extending-add-internal-source"></a>
+**Add an Internal Data Source**
+
+This framework could be easily extended to make calls to endpoints that return data from your own database. This is a little speculative, but I would do this by creating a new class in the **[APIController](#documentation-APIController) that extends ```APIController``` and handles communication with our database.
+
+This class would probably look something like this:
+
+```php
+class DatabaseQuery extends APIController {
+  // Properties...
+
+  public function connect(){}
+
+  // Retrieval methods.
+  // I would likely use PDO to prepare my statements.
+  public function select($query, $params){}
+  public function insert($query, $params){}
+
+}
+```
+
+Then in the endpoint you use to retrieve internal data you could do something like this:
+
+```php
+$database = new DatabaseQuery;
+
+$query = 'SELECT * FROM user WHERE name = :name';
+$params = array(
+  'name' => 'Peter',
+);
+$result = $database->select($query, $params);
+
+echo json_encode($result);
+exit();
+```
+
+Once you have an output you could add this API similarly to how you'd add any other API. Define it in **[source.js](https://github.com/pmerrill/infosec/blob/master/webroot/source.js)** and create a page that will render your data.

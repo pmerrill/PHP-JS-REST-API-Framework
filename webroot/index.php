@@ -28,8 +28,8 @@
           <div id="messages" class="col-12 d-none"></div>
 
           <!-- The ID of each element must be defined in source.js and the endpoint. -->
-          <div id="result" class="display col-12 mt-3 d-none"></div>
-          <div id="info" class="display col-12 mt-3 d-none"></div>
+          <div id="app-result" class="display col-12 mt-3 d-none"></div>
+          <div id="app-info" class="display col-12 mt-3 d-none"></div>
 
         </div>
     </div>

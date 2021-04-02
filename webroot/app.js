@@ -107,13 +107,13 @@ const display = {
 
     render: {
         error: function(message){
-            $('.display').addClass('d-none');
+            this.emptyDisplay();
             $('#messages').empty().append('<div class="error text-danger mt-2">' + message + '</div>').removeClass('d-none');
         },
         emptyMessages: function(){
             $('#messages').empty();
         },
-        emptyResults: function(){
+        emptyDisplay: function(){
             return $('.display').addClass('d-none').empty();
         },
         loading: function(element){
@@ -146,7 +146,7 @@ const display = {
 
                     // Builds the UI as defined by this source's response property.
                     let output = sourcePath.response[property].build();
-                    $('#' + property).append(output).removeClass('d-none');
+                    $('#app-' + property).append(output).removeClass('d-none');
                 
                 }
 
@@ -156,7 +156,7 @@ const display = {
     state: {
         loading: function(){
             display.render.loading(display.submitButton);
-            display.render.emptyResults();
+            display.render.emptyDisplay();
             display.render.emptyMessages();
             display.render.disabledForm();
         },

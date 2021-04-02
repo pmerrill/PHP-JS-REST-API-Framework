@@ -40,28 +40,28 @@ const source = {
                 response: {
 
                     // This should exactly match a key provided by the api/[endpoint].php response.
-                    // There should also be an element in the UI such as <div id="result" class="display">.
+                    // There should also be an element in the UI such as <div id="app-result" class="display">.
                     result: {
 
                         // This is set by app.js after a call is done.
+                        // app.js iterates over the endpoint's response and updates all matching source.js response object values.
                         value: null,
 
-                        // When app.js is done with a call it will render the response by calling this function.
-                        // The output is appended to the UI element with the same ID
-                        // as the name of the parent object. <div id="result"></div>
+                        // app.js uses this to build the UI for this response object.
+                        // It appends the output to a specific UI element, which is <div id="app-result"></div> in this case.
                         build: function(){
                             let output = '';
                             
-                            for( const element of this.value ){
-                                if( display.helper.hasKeys(element) ){
+                            for(const object of this.value){
+                                if(display.helper.hasKeys(object)){
                                     output += '<div class="list-group mb-3">';
                                     output += '     <div class="list-group-item list-group-item-action">';
                                     output += '         <div class="d-md-flex w-100 justify-content-between">';
                                     output += '             <div class="col-12 col-md-2 mb-3 mb-md-0">';
-                                    output += '                 <img src="' + element['flag'] + '" class="w-75 rounded">';
+                                    output += '                 <img src="' + object['flag'] + '" class="w-75 rounded">';
                                     output += '             </div>';
                                     output += '             <div class="col-12 col-md-10">';
-                                    output += '                 <h5 class="fw-bold mb-1">' + element['name'] + '</h5>';
+                                    output += '                 <h5 class="fw-bold mb-1">' + object['name'] + '</h5>';
                                     output += '                 <div class="table-responsive">';
                                     output += '                     <table class="table">';
                                     output += '                         <thead>';
@@ -75,17 +75,17 @@ const source = {
                                     output += '                         </thead>';
                                     output += '                         <tbody>';
                                     output += '                             <tr>';
-                                    output += '                                 <td>' + element['region'] + '</td>';
-                                    output += '                                 <td>' + element['subregion'] + '</td>';
-                                    output += '                                 <td>' + display.helper.numberWithCommas(element['population']) + '</td>';
+                                    output += '                                 <td>' + object['region'] + '</td>';
+                                    output += '                                 <td>' + object['subregion'] + '</td>';
+                                    output += '                                 <td>' + display.helper.numberWithCommas(object['population']) + '</td>';
                                     output += '                                 <td>';
-                                    for( const language of element['languages'] ){
+                                    for(const language of object['languages']){
                                         output += '                                 <small>' + language['name'] + '</small><br/>';
                                     }
                                     output += '                                 </td>';
                                     output += '                                 <td>';
-                                    output += '                                     <small><strong>Alpha 2</strong>: ' + element['alpha2Code'] + '</small><br/>';
-                                    output += '                                     <small><strong>Alpha 3</strong>: ' + element['alpha3Code'] + '</small>';
+                                    output += '                                     <small><strong>Alpha 2</strong>: ' + object['alpha2Code'] + '</small><br/>';
+                                    output += '                                     <small><strong>Alpha 3</strong>: ' + object['alpha3Code'] + '</small>';
                                     output += '                                 </td>';
                                     output += '                             </tr>';
                                     output += '                         </tbody>';
@@ -110,7 +110,7 @@ const source = {
                         }
                     },
 
-                    // Defines what info gets rendered in <div id="info" class="display">.
+                    // Defines what info gets rendered in <div id="app-info" class="display">.
                     info: {
                         value: null,
                         
@@ -130,26 +130,26 @@ const source = {
                             let output = '';
 
                             // Add the key to the UI then generate the UI for the key's value.
-                            for( const element in this.value ){
+                            for(const property in this.value){
                                 output += '<tr>';
-                                output += '     <td class="fw-bold capitalize">' + element + '</td>';
-                                output += '     <td>' + this.subitem(element) + '</td>';
+                                output += '     <td class="fw-bold capitalize">' + property + '</td>';
+                                output += '     <td>' + this.subitem(property) + '</td>';
                                 output += '</tr>';
                             }
                             return output;
                         },
                         
-                        subitem: function(element){
+                        subitem: function(object){
                             let output = '';
 
                             // This handles an object that has keys with a plain value
                             // and keys with an array as the value.
-                            if( display.helper.hasIndex(this.value, element) ){
-                                for( const property in this.value[element] ){
-                                    output += property + ': ' + this.value[element][property] + '<br/>';
+                            if(display.helper.hasIndex(this.value, object)){
+                                for(const property in this.value[object]){
+                                    output += property + ': ' + this.value[object][property] + '<br/>';
                                 }
                             } else {
-                                output += this.value[element];
+                                output += this.value[object];
                             }
 
                             return output;
@@ -189,13 +189,13 @@ const source = {
                         build: function(){
                             let output = '';
                             
-                            for( const element of this.value ){
-                                if( display.helper.hasKeys(element) ){
+                            for(const object of this.value){
+                                if(display.helper.hasKeys(object)){
                                     output += '<div class="list-group">';
                                     output += '     <div class="list-group-item list-group-item-action">';
                                     output += '         <div class="d-flex w-100 justify-content-between py-3">';
-                                    output += '             <h5 class="mb-1">' + element['title'] + ' Weather Forecast</h5>';
-                                    output += '             <small>Latitute/Longitude: ' + element['latt_long'] + '</small>';
+                                    output += '             <h5 class="mb-1">' + object['title'] + ' Weather Forecast</h5>';
+                                    output += '             <small>Latitute/Longitude: ' + object['latt_long'] + '</small>';
                                     output += '         </div>';
                                     output += '         <div class="table-responsive">';
                                     output += '             <table class="table">';
@@ -209,7 +209,7 @@ const source = {
                                     output += '                 </thead>';
                                     output += '                 <tbody>';
                                     
-                                    for( const day of element['consolidated_weather'] ){
+                                    for(const day of object['consolidated_weather']){
                                         output += '                 <tr>';
                                         output += '                     <th scope="col">' + day['applicable_date'] + '</th>';
                                         output += '                     <td>' + Math.round(day['min_temp']) + '</td>';
@@ -256,15 +256,15 @@ const source = {
                         
                         build: function(){
                             let output = '';
-                            for( const element of this.value ){
-                                if( display.helper.hasKeys(element) ){
+                            for(const object of this.value){
+                                if(display.helper.hasKeys(object)){
                                     output += '<div class="list-group">';
                                     output += '     <div class="list-group-item list-group-item-action mb-3">';
                                     output += '         <div class="d-flex w-100 justify-content-between pt-3 pb-1">';
-                                    output += '             <h5 class="fw-bold mb-1">' + element['title'] + '</h5>';
-                                    output += '             <small>Latitute/Longitude: ' + element['latt_long'] + '</small>';
+                                    output += '             <h5 class="fw-bold mb-1">' + object['title'] + '</h5>';
+                                    output += '             <small>Latitute/Longitude: ' + object['latt_long'] + '</small>';
                                     output += '         </div>';
-                                    output += '         <p>Where On Earth ID (WOEID): <code>' + element['woeid'] + '</code></p>';
+                                    output += '         <p>Where On Earth ID (WOEID): <code>' + object['woeid'] + '</code></p>';
                                     output += '     </div>';
                                     output += '</div>';
                                 }
@@ -301,14 +301,14 @@ const source = {
                         
                         build: function(){
                             let output = '';
-                            for( const element of this.value ){
-                                if( display.helper.hasKeys(element) ){
+                            for(const object of this.value){
+                                if(display.helper.hasKeys(object)){
                                     output += '<div class="list-group">';
                                     output += '     <div class="list-group-item list-group-item-action mb-3">';
                                     output += '         <div class="d-flex w-100 justify-content-between pt-3 pb-1">';
-                                    output += '             <h5 class="mb-1"><strong>Q</strong>: ' + element['question'] + '</h5>';
+                                    output += '             <h5 class="mb-1"><strong>Q</strong>: ' + object['question'] + '</h5>';
                                     output += '         </div>';
-                                    output += '         <p><strong>A</strong>: ' + element['correct_answer'] + '</p>';
+                                    output += '         <p><strong>A</strong>: ' + object['correct_answer'] + '</p>';
                                     output += '     </div>';
                                     output += '</div>';
                                 }
