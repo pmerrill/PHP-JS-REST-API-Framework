@@ -18,7 +18,7 @@
         <div class="row bg-white box-shadow rounded p-4">
           
           <!-- Map to an API source in source.js by entering a source and endpoint data attribute. -->
-          <div id="app" data-source="MetaWeather" data-endpoint="search" class="col-12">
+          <div id="app" data-source="MetaWeather" data-path="search" class="col-12">
             <div class="input-group box-shadow">
               <input id="search" type="text" class="form-control p-3 fs-6" placeholder="Search for a city by name (Ex: Madrid)" autofocus>
               <button id="submit" class="btn text-white p-3"><i class="fas fa-search fs-6"></i></button>

@@ -8,20 +8,23 @@ $('document').ready(function(){
     });
 
     $('#submit').on('click', function (){
+
+        // Make the element accessible via the display object.
         display.submitButton = $(this);
 
-        //
-        source[app.source].path[app.endpoint].param.default.setValue();
+        // Set the default source path param value as defined in source.js.
+        source[app.source].path[app.path].param.default.setValue();
 
-        //
-        let isValid = app.checkSourceParam.isValid( source[app.source].path[app.endpoint].param.default );
+        // Verify that the default value is valid.
+        let isValid = app.checkSourceParam.isValid( source[app.source].path[app.path].param.default );
 
         if(!isValid) {
             display.render.error('<b>Oops!</b> Looks like you forgot to enter something. <i class="far fa-smile-wink"></i>');
             return false;
         } else {
         
-            //
+            // Make a request to the source path 
+            // endpoint and process the response.
             app.call();
 
         }
@@ -33,11 +36,13 @@ $('document').ready(function(){
 //
 const app = {
 
-    //
+    // Get the source and endpoint set in the UI.
+    // source = A top-level object in source.js.
+    // path = A path object in source.js that defines this API call.
     source: $('#app').data('source'),
-    endpoint: $('#app').data('endpoint'),
+    path: $('#app').data('path'),
 
-    // 
+    // Contains functions for verifying the value of a source path parameter.
     checkSourceParam: {
         isValid: function(param){
             let isValid = this.isValidLength(param);
@@ -52,15 +57,17 @@ const app = {
         }
     },
 
-    //
+    // Makes a call to the API endpoint and handles the response.
     call: function(){
         
-        // 
         display.state.loading();
         
-        //
         $.get( 
-            source[app.source].path[app.endpoint].endpoint,
+
+            // Get the endpoint as defined in source.js.
+            source[app.source].path[app.path].endpoint,
+
+            // Iterates over the source param object in source.js and creates a key-value object.
             this.sourceParameters()
         )
         .fail(function() {
@@ -72,14 +79,14 @@ const app = {
         .always(function() {
             display.state.doneLoading();
             return false;
-        })
+        });
     },
 
-    //
+    // Creates a key-value object from the source path params as defined in source.js.
     sourceParameters: function(){
         let output = {};
         
-        let sourceParams = source[app.source].path[app.endpoint].param;
+        let sourceParams = source[app.source].path[app.path].param;
         
         for(const property in sourceParams){
             let name = sourceParams[property].name;
@@ -91,9 +98,13 @@ const app = {
 
 }
 
-//
+// UI manipulation
 const display = {
+
+    // Set when a user clicks the submit button.
     submitButton: null,
+
+
     render: {
         error: function(message){
             $('.display').addClass('d-none');
@@ -118,25 +129,28 @@ const display = {
             return $('#search').attr('disabled', false);
         },
 
-        //
-        output: function(response){
-            let appSourcePath = source[app.source].path[app.endpoint];
+        // Generate and render data as defined in source.js.
+        output: function(apiResponse){
 
-            for(const property in appSourcePath.response){
-                appSourcePath.response[property].value = response[property];
+            // Simplify the logic by assigning to a variable.
+            let sourcePath = source[app.source].path[app.path];
 
-                if (appSourcePath.response[property].isInvalid()) {
+            // Iterate over the response object(s) defined in source.js.
+            for(const property in sourcePath.response){
+                
+                sourcePath.response[property].value = apiResponse[property];
+
+                if (!sourcePath.response[property].isValid()) {
                     display.render.error('<i class="fas fa-exclamation-circle"></i> <b>Uh oh!</b> There was a problem.');
                 } else {
 
-                    let interface = appSourcePath.response[property].build();
-
-                    $('#' + property).append(interface).removeClass('d-none');
+                    // Builds the UI as defined by this source's response property.
+                    let output = sourcePath.response[property].build();
+                    $('#' + property).append(output).removeClass('d-none');
+                
                 }
 
-            }
-
-            
+            } 
         }
     },
     state: {
@@ -152,6 +166,18 @@ const display = {
         }
     },
     helper: {
+        isUndefined: function(value){
+            return typeof(value) === 'undefined';
+        },
+        isNull: function(value){
+            return value === null;
+        },
+        hasIndex: function(object, index){
+            return Object.keys(object[index]).length > 0;
+        },
+        hasKeys: function(object){
+            return Object.keys(object).length > 0;
+        },
         numberWithCommas: function(number){
             return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
         }

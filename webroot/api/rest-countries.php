@@ -10,6 +10,7 @@
 
     $apiController = new APIController;
 
+    // Define then validate the request method.
     $apiController->defineRequestMethod('GET');
     $apiController->validateRequest();
     if(!$apiController->isValidRequest){
@@ -19,11 +20,14 @@
     $apiCall = new APICall;
     $apiCall->setEndpointHost( 'https://restcountries.eu' );
 
-    // Process form input.
+    // The search input is part of the endpoint path.
+    // It isn't used in the query string.
     $country = findKeyValue($_GET, 'search');
 
+    // Switch paths based on country length.
     $isAlphaCodeSearch = strlen($country) <= 3;
     $pathPart = $isAlphaCodeSearch ? 'alpha' : 'name';
+
     $apiCall->setEndpointPath( '/rest/v2/' . $pathPart . '/' . $country );
 
     // Optional parameters
@@ -33,6 +37,7 @@
     $queryString = buildQueryString($parameters);
     $apiCall->setEndpointQueryString($queryString);
 
+    // Piece together the endpoint parts.
     $apiCall->compileEndpoint();
 
     $apiCall->start();
@@ -60,6 +65,8 @@
     $apiCall->setSortKey('population');
     $apiCall->sort('desc');
 
+    // The key names you choose here must be defined in source.js.
+    // If they aren't then the values will be ignored by app.js when it tries to build the UI.
     $output = outputTemplate();
     $output['result'] = $apiCall->result;
     $output['info'] = [
@@ -69,5 +76,6 @@
     ];
     echo json_encode($output);
 
+    // Free resources when we're done.
     $apiCall->end();
     exit();

@@ -1,39 +1,59 @@
 //
 const source = {
         
-    //
+    // The name of this object should match whatever is set in the
+    // in the data source attribute of <div id="app" data-source"...">.
     RESTCountries: {
         path: {
             
-            //
+            // This object's name should match whatever is set in the
+            // path data attribute of <div id="app" data-path="...">.
             default: {
                 endpoint: '/api/rest-countries.php',
 
-                // 
+                // The contents of this object are compiled by sourceParameters() in app.js
+                // and are passed to the endpoint as a query string.
                 param: {
-                    // Each param object must have a default property.
+
+                    // A default parameter is required if triggering
+                    // a call to this endpoint via a click.
                     default: {
                         name: 'search',
                         value: '',
+
+                        // Required if users need to dynamically set the value of this parameter.
                         setValue: function(){
                             this.value = $('#search').val();
                         }
                     },
+
                     fields: {
                         name: 'fields',
                         value: 'alpha2Code;alpha3Code;flag;languages;name;population;region;subregion'
                     }
                 },
 
-                // Define each response object
-                // as it relates to what the backend provides.
+                // Response objects are mapped to keys in the endpoint's response.
+                // app.js will call build() on whatever you define in this object.
+                // It is important to only put what you want rendered in here and to 
+                // make sure that you include a build function that outputs the HTML you want in the UI.
                 response: {
+
+                    // This should exactly match a key provided by the api/[endpoint].php response.
+                    // There should also be an element in the UI such as <div id="result" class="display">.
                     result: {
+
+                        // This is set by app.js after a call is done.
                         value: null,
+
+                        // When app.js is done with a call it will render the response by calling this function.
+                        // The output is appended to the UI element with the same ID
+                        // as the name of the parent object. <div id="result"></div>
                         build: function(){
                             let output = '';
-                            for(const element of this.value){
-                                if(Object.keys(element).length > 0){
+                            
+                            for( const element of this.value ){
+                                if( display.helper.hasKeys(element) ){
                                     output += '<div class="list-group mb-3">';
                                     output += '     <div class="list-group-item list-group-item-action">';
                                     output += '         <div class="d-md-flex w-100 justify-content-between">';
@@ -59,7 +79,7 @@ const source = {
                                     output += '                                 <td>' + element['subregion'] + '</td>';
                                     output += '                                 <td>' + display.helper.numberWithCommas(element['population']) + '</td>';
                                     output += '                                 <td>';
-                                    for(const language of element['languages']){
+                                    for( const language of element['languages'] ){
                                         output += '                                 <small>' + language['name'] + '</small><br/>';
                                     }
                                     output += '                                 </td>';
@@ -77,48 +97,67 @@ const source = {
                                     output += '</div>';
                                 }
                             }
+
                             return output;
                         },
-                        isInvalid: function() {
-                            let isInvalid = this.isNull();
-                            isInvalid = !isInvalid ? this.hasInvalidRoot() : isInvalid;
-                            //isInvalid = !isInvalid ? this.hasErrorCode() : isInvalid;
-                            return isInvalid;
-                        },
-                        isNull: function(){
-                            return this.value === null;
-                        },
-                        hasInvalidRoot: function(){
-                            return Object.keys(this.value[0]).length === 0;
-                        },
-                        /*hasErrorCode: function(){
-                            return this.value['status']['code'] !== this.successStatusCode;
-                        },
-                        successStatusCode: 200
-                        */
+
+                        // app.js checks this before rendering the data via build().
+                        isValid: function() {
+                            let isValid = !display.helper.isUndefined(this.value);
+                            isValid = isValid ? !display.helper.isNull(this.value) : isValid;
+                            isValid = isValid ? display.helper.hasIndex(this.value, 0) : isValid;
+                            return isValid;
+                        }
                     },
+
+                    // Defines what info gets rendered in <div id="info" class="display">.
                     info: {
                         value: null,
+                        
                         build: function(){
                             let output = '';
-                            for(const element in this.value){
-                                output += '<h5 class="mt-3 fw-bold capitalize">' + element + '</h5> ';
-                                if(Object.keys(this.value[element]).length > 0){
-                                    for(const property in this.value[element]){
-                                        output += property + ': ' + this.value[element][property] + '<br/>';
-                                    }
-                                } else {
-                                    output += this.value[element];
-                                }
+                            output += '     <div class="table-responsive">';
+                            output += '         <table class="table">';
+                            output += '             <tbody>';
+                            output +=                   this.content();
+                            output += '             </tbody>';
+                            output += '         </table>';
+                            output += '     </div>';
+                            return output;
+                        },
+
+                        content: function(){
+                            let output = '';
+
+                            // Add the key to the UI then generate the UI for the key's value.
+                            for( const element in this.value ){
+                                output += '<tr>';
+                                output += '     <td class="fw-bold capitalize">' + element + '</td>';
+                                output += '     <td>' + this.subitem(element) + '</td>';
+                                output += '</tr>';
                             }
                             return output;
                         },
-                        isInvalid: function() {
-                            let isInvalid = this.isNull();
-                            return isInvalid;
+                        
+                        subitem: function(element){
+                            let output = '';
+
+                            // This handles an object that has keys with a plain value
+                            // and keys with an array as the value.
+                            if( display.helper.hasIndex(this.value, element) ){
+                                for( const property in this.value[element] ){
+                                    output += property + ': ' + this.value[element][property] + '<br/>';
+                                }
+                            } else {
+                                output += this.value[element];
+                            }
+
+                            return output;
                         },
-                        isNull: function(){
-                            return this.value === null;
+
+                        isValid: function() {
+                            let isValid = !display.helper.isNull(this.value);
+                            return isValid;
                         }
                     }
                 }
@@ -127,15 +166,13 @@ const source = {
         },
     },
 
-    //
+    // MetaWeather API integration
     MetaWeather: {
         path: {
-            
-            //
+
+            // Get the forecast for a specific location.
             default: {
                 endpoint: '/api/bonus-work/weather.php',
-
-                //
                 param: {
                     default: {
                         name: 'locationID',
@@ -145,16 +182,15 @@ const source = {
                         }
                     }
                 },
-
-                // Define each response object
-                // as it relates to what the backend provides.
                 response: {
                     result: {
                         value: null,
+                        
                         build: function(){
                             let output = '';
-                            for(const element of this.value){
-                                if(Object.keys(element).length > 0){
+                            
+                            for( const element of this.value ){
+                                if( display.helper.hasKeys(element) ){
                                     output += '<div class="list-group">';
                                     output += '     <div class="list-group-item list-group-item-action">';
                                     output += '         <div class="d-flex w-100 justify-content-between py-3">';
@@ -173,7 +209,7 @@ const source = {
                                     output += '                 </thead>';
                                     output += '                 <tbody>';
                                     
-                                    for(const day of element['consolidated_weather']){
+                                    for( const day of element['consolidated_weather'] ){
                                         output += '                 <tr>';
                                         output += '                     <th scope="col">' + day['applicable_date'] + '</th>';
                                         output += '                     <td>' + Math.round(day['min_temp']) + '</td>';
@@ -189,25 +225,22 @@ const source = {
                                     output += '</div>';
                                 }
                             }
+                            
                             return output;
                         },
-                        isInvalid: function() {
-                            let isInvalid = this.isNull();
-                            return isInvalid;
-                        },
-                        isNull: function(){
-                            return this.value === null;
+
+                        isValid: function() {
+                            let isValid = !display.helper.isNull(this.value);
+                            return isValid;
                         }
                     }
                 }
 
             },
 
-            // 
+            // Search for a city by name.
             search: {
                 endpoint: '/api/bonus-work/weather-search.php',
-
-                //
                 param: {
                     default: {
                         name: 'query',
@@ -217,16 +250,14 @@ const source = {
                         }
                     }
                 },
-
-                // Define each response object
-                // as it relates to what the backend provides.
                 response: {
                     result: {
                         value: null,
+                        
                         build: function(){
                             let output = '';
-                            for(const element of this.value){
-                                if(Object.keys(element).length > 0){
+                            for( const element of this.value ){
+                                if( display.helper.hasKeys(element) ){
                                     output += '<div class="list-group">';
                                     output += '     <div class="list-group-item list-group-item-action mb-3">';
                                     output += '         <div class="d-flex w-100 justify-content-between pt-3 pb-1">';
@@ -240,45 +271,38 @@ const source = {
                             }
                             return output;
                         },
-                        isInvalid: function() {
-                            let isInvalid = this.isNull();
-                            return isInvalid;
-                        },
-                        isNull: function(){
-                            return this.value === null;
+
+                        isValid: function() {
+                            let isValid = !display.helper.isNull(this.value);
+                            return isValid;
                         }
                     }
                 }
-
             }
         },
     },
 
-    //
+    // Open Trivia Database Integration
     OpenTrivia: {
         path: {
             
-            //
+            // Get a number of random trivia questions.
             default: {
                 endpoint: '/api/bonus-work/trivia.php',
-
-                //
                 param: {
                     default: {
                         name: 'amount',
                         value: 10
                     }
                 },
-
-                // Define each response object
-                // as it relates to what the backend provides.
                 response: {
                     result: {
                         value: null,
+                        
                         build: function(){
                             let output = '';
-                            for(const element of this.value){
-                                if(Object.keys(element).length > 0){
+                            for( const element of this.value ){
+                                if( display.helper.hasKeys(element) ){
                                     output += '<div class="list-group">';
                                     output += '     <div class="list-group-item list-group-item-action mb-3">';
                                     output += '         <div class="d-flex w-100 justify-content-between pt-3 pb-1">';
@@ -291,16 +315,13 @@ const source = {
                             }
                             return output;
                         },
-                        isInvalid: function() {
-                            let isInvalid = this.isNull();
-                            return isInvalid;
-                        },
-                        isNull: function(){
-                            return this.value === null;
+
+                        isValid: function() {
+                            let isValid = !display.helper.isNull(this.value);
+                            return isValid;
                         }
                     }
                 }
-
             }
         },
     },

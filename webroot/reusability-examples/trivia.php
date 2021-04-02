@@ -18,7 +18,7 @@
         <div class="row bg-white box-shadow rounded p-4">
           
           <!-- Map to an API source in source.js by entering a source and endpoint data attribute. -->
-          <div id="app" data-source="OpenTrivia" data-endpoint="default" class="col-12"></div>
+          <div id="app" data-source="OpenTrivia" data-path="default" class="col-12"></div>
 
           <!-- Display API response and error handling messages. -->
           <div id="messages" class="col-12 d-none"></div>

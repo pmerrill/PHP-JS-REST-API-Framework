@@ -50,7 +50,6 @@
             'status' => [
                 'code' => 200,
                 'message' => ''
-            ],
-            'result' => null
+            ]
         );
     }
