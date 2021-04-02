@@ -630,13 +630,13 @@ RESTCountries: {
       param: {
       
         // Every source must have a default param if a call to the endpoint is triggered on click.
-	      // See app.js $('#submit').on('click'... where default value gets assigned (~line 14).
+        // See app.js $('#submit').on('click'... where default value gets assigned (~line 14).
         default: {
           name: 'search',
           value: '',
-          
+      
           // Required if users need to dynamically set the value of this parameter.
-	        // Called in app.js in the on click function.
+          // Called in app.js in the on click function.
           setValue: function(){
             this.value = $('#search').val();
           }
@@ -665,9 +665,9 @@ RESTCountries: {
           // It appends the output to a specific UI element, which is <div id="app-result"></div> in this case.
           build: function(){
             let output = '';
-            for(const element of this.value){
-                if(display.helper.hasKeys(element)){
-                  output += '<h1>Example</h1>' + JSON.stringify(element);
+            for(const object of this.value){
+                if(display.helper.hasKeys(object)){
+                  output += '<h1>Example</h1>' + JSON.stringify(object);
                 }
              }
              return output;
@@ -756,9 +756,9 @@ CatFacts: {
           value: null,
           build: function(){
             let output = '';
-            for(const element of this.value){
-              if(display.helper.hasKeys(element)){
-                output +=  '<p>' + element['text'] + '</p>';
+            for(const object of this.value){
+              if(display.helper.hasKeys(object)){
+                output +=  '<p>' + object['text'] + '</p>';
               }
             }
             return output;
@@ -885,7 +885,7 @@ class DatabaseQuery extends APIController {
 
   public function connect(){}
 
-  // Retrieval methods.
+  // Database communication methods.
   // I would likely use PDO to prepare my statements.
   public function select($query, $params){}
   public function insert($query, $params){}
