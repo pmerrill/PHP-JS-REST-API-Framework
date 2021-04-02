@@ -40,6 +40,7 @@
               <li class="list-group-item">When the button is clicked <code>/app.js</code> uses what's defined in <code>source.js</code> and makes a call to <code>/api/rest-countries.php</code>.</li>
               <li class="list-group-item"><code>/api/rest-countries.php</code> retrieves and formats the data.</li>
               <li class="list-group-item"><code>/app.js</code> will then iterate over the endpoint's response and <i>build</i> the UI by rendering the output of the <code>build</code> function in the <code>source.js RESTCountries default path</code> response object.</li>
+              <li class="list-group-item">Read the documentation on <a href="https://github.com/pmerrill/infosec" target="_blank">GitHub</a>.</li>
             </ul>
           <div>
 

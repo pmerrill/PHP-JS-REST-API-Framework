@@ -27,9 +27,8 @@
           <div id="app-result" class="display col-12 mt-3 d-none"></div>
           
           <div id="details" class="col-12 mt-4">
-            <h5 class="fw-bold">Info</h5>
-            <p>This example uses the <a href="https://opentdb.com/api_config.php" target="_blank">Open Trivia Database API</a> and retrieves 3 random trivia questions.</p>
-            <p>The Open Trivia Database API accepts a total <code>amount</code> parameter, which is set in the <code>source.js</code> definition.</p>
+            <h5 class="fw-bold">Random Trivia</h5>
+            <p>This example uses the <a href="https://opentdb.com/api_config.php" target="_blank">Open Trivia Database API</a> and retrieves 3 random trivia questions. The endpoint accepts a total <code>amount</code> parameter, which is set in the <code>source.js</code> definition. Refresh the page to get a new set of random trivia questions.</p>
             <ul class="list-group list-group-flush">
               <li class="list-group-item">This page defines which source we are going to use through data attributes. <code>&lt;div id="app" data-source="OpenTrivia" data-path="default"&gt;</code>.
               <li class="list-group-item"><code>onload="app.call()"</code> was added to the body tag of this page. This tells <code>/app.js</code> to immediately make a call to the source endpoint when the page loads.</li>
@@ -37,6 +36,7 @@
               <li class="list-group-item"><code>/app.js</code> uses what's defined in <code>source.js</code> and makes a call to <code>/api/bonus-work/trivia.php</code>.</li>
               <li class="list-group-item"><code>/api/bonus-work/trivia.php</code> retrieves and formats the data.</li>
               <li class="list-group-item"><code>/app.js</code> will then iterate over the endpoint's response and <i>build</i> the UI by rendering the output of the <code>build</code> function in the <code>source.js OpenTrivia default path</code> response object.</li>
+              <li class="list-group-item">Read the documentation on <a href="https://github.com/pmerrill/infosec" target="_blank">GitHub</a>.</li>
             </ul>
           </div>
 

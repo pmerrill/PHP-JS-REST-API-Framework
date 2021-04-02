@@ -32,15 +32,15 @@
           <div id="app-result" class="display col-12 mt-3 d-none"></div>
           
           <div id="details" class="col-12 mt-4">
-            <h5 class="fw-bold">Info</h5>
-            <p>This example uses the <a href="https://www.metaweather.com/api/#locationsearch" target="_blank">MetaWeather Location Search API</a> and searches for locations by name. The API returns basic info such as latitute, longitude, and WOEID.</p>
-            <p>The MetaWeather API accepts a <code>query</code> parameter based on the input above.</p>
+            <h5 class="fw-bold">MetaWeather Location Search</h5>
+            <p>This example uses the <a href="https://www.metaweather.com/api/#locationsearch" target="_blank">MetaWeather Location Search API</a> and searches for locations by name and accepts a <code>query</code> parameter based on the input above. The API returns basic info such as latitute, longitude, and WOEID.</p>
             <ul class="list-group list-group-flush">
               <li class="list-group-item">This page defines which source we are going to use through data attributes. <code>&lt;div id="app" data-source="MetaWeather" data-path="search"&gt;</code>.
               <li class="list-group-item"><code>/source.js</code> defines the <code>MetaWeather</code> object, which includes the endpoint, any parameters we want to use, and a <code>build</code> function that tells <code>/app.js</code> how to render the UI.</li>
               <li class="list-group-item">When the button is clicked <code>/app.js</code> uses what's defined in <code>source.js</code> and makes a call to <code>/api/bonus-work/weather-search.php</code>.</li>
               <li class="list-group-item"><code>/api/bonus-work/weather-search.php</code> retrieves and formats the data.</li>
               <li class="list-group-item"><code>/app.js</code> will then iterate over the endpoint's response and <i>build</i> the UI by rendering the output of the <code>build</code> function in the <code>source.js MetaWeather search path</code> response object.</li>
+              <li class="list-group-item">Read the documentation on <a href="https://github.com/pmerrill/infosec" target="_blank">GitHub</a>.</li>
             </ul>
           </div>
 
