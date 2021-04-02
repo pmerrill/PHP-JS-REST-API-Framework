@@ -25,26 +25,22 @@
           <!-- Display API response and error handling messages. -->
           <div id="messages" class="col-12 d-none"></div>
 
-          <!-- Display API results. -->
-          <div id="result" class="display col-12 mt-3 d-none"></div>
+          <!-- The ID of each element must be defined in source.js and the endpoint. -->
+          <div id="app-result" class="display col-12 mt-3 d-none"></div>
           
           <div id="details" class="col-12 mt-4">
-            <h5 class="fw-bold">Info</h5>
-            <p>This example uses the <a href="https://www.metaweather.com/api/#location" target="_blank">MetaWeather Location API</a> and retrieves the forecast of a specific location. Looking at the source code will show you that this API call reuses a very large portion of the code I wrote for the RESTCountries challenge.</p>
+            <h5 class="fw-bold">MetaWeather</h5>
+            <p>This example uses the <a href="https://www.metaweather.com/api/#location" target="_blank">MetaWeather Location API</a> and retrieves the forecast of a specific location.</p>
             <p>The MetaWeather API accepts a "location ID", which is set as a data attribute of the #api element.</p>
             <p>Click the button above to get London's forecast.</p>
-
-            <h5 class="fw-bold">source.js</h5>
-            <p><code>MetaWeather</code> was added to the <code>source</code> object in source.js. This is where the endpoint and parameters are defined as well as how the output is compiled and rendered.</p>
-            <p>The #api element's endpoint data attribute defines which MetaWeather path we use. This example defines the path as <code>default</code>, which means that we'll use what's defined in the <code>source/MetaWeather/path/default</code> object in source.js.</p>
-            <p>The <code>default</code> path sets the endpoint to <code>/api/bonus-work/weather.php</code>, creates the parameter(s), and sets up the <code>resultsFactory</code>.</p>
-            <p>When we render the results of the API call we use the <code>resultsFactory</code>. This lets us set a template for how the data gets compiled and rendered.</p>
-
-            <h5 class="fw-bold">/api/bonus-work/weather.php</h5>
-            <p>This is the endpoint the <code>default</code> MetaWeather path sets in source.js. It performs a curl request through a series of object-oriented abstractions.</p>
-            <p><code>/api/bonus-work/weather.php</code> uses the <code>APIController</code> class and its subclasses to make curl requests, process the results, and output them in a universal format.</p>
-            <p>The <code>APIController</code> class exists in <code>controllers/APIController.php</code> and has handy <code>$apiCall</code> methods such as <code>->start()</code>, <code>->setOptions()</code>, <code>->execute()</code>, <code>->end()</code>, <code>->errorCheck()</code>, and more.</p>
-        </div>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item">This page defines which source we are going to use through data attributes. <code>&lt;div id="app" data-source="MetaWeather" data-path="default" data-locationid="44418"&gt;</code>.
+              <li class="list-group-item"><code>/source.js</code> defines the <code>MetaWeather</code> object, which includes the endpoint, any parameters we want to use, and a <code>build</code> function that tells <code>/app.js</code> how to render the UI.</li>
+              <li class="list-group-item">When the button is clicked <code>/app.js</code> uses what's defined in <code>source.js</code> and makes a call to <code>/api/bonus-work/weather.php</code>.</li>
+              <li class="list-group-item"><code>/api/bonus-work/weather.php</code> retrieves and formats the data.</li>
+              <li class="list-group-item"><code>/app.js</code> will then iterate over the endpoint's response and <i>build</i> the UI by rendering the output of the <code>build</code> function in the <code>source.js MetaWeather default path</code> response object.</li>
+            </ul>
+          </div>
 
         </div>
     </div>

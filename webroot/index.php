@@ -31,6 +31,18 @@
           <div id="app-result" class="display col-12 mt-3 d-none"></div>
           <div id="app-info" class="display col-12 mt-3 d-none"></div>
 
+          <div id="details" class="col-12 mt-4">
+            <h5 class="fw-bold">REST Countries</h5>
+            <p>This page is an interface for the <a href="https://restcountries.eu/" target="_blank">REST Countries API</a>. It lets you retrieve information about countries by name or alpha code.</p>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item">This page defines which source we are going to use through data attributes. <code>&lt;div id="app" data-source="RESTCountries" data-path="default"&gt;</code>.
+              <li class="list-group-item"><code>/source.js</code> defines the <code>RESTCountries</code> object, which includes the endpoint, any parameters we want to use, and a <code>build</code> function that tells <code>/app.js</code> how to render the UI.</li>
+              <li class="list-group-item">When the button is clicked <code>/app.js</code> uses what's defined in <code>source.js</code> and makes a call to <code>/api/rest-countries.php</code>.</li>
+              <li class="list-group-item"><code>/api/rest-countries.php</code> retrieves and formats the data.</li>
+              <li class="list-group-item"><code>/app.js</code> will then iterate over the endpoint's response and <i>build</i> the UI by rendering the output of the <code>build</code> function in the <code>source.js RESTCountries default path</code> response object.</li>
+            </ul>
+          <div>
+
         </div>
     </div>
 

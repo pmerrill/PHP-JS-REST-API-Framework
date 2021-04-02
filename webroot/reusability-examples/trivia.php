@@ -23,25 +23,22 @@
           <!-- Display API response and error handling messages. -->
           <div id="messages" class="col-12 d-none"></div>
 
-          <!-- Display API results. -->
-          <div id="result" class="display col-12 mt-3 d-none"></div>
+          <!-- The ID of each element must be defined in source.js and the endpoint. -->
+          <div id="app-result" class="display col-12 mt-3 d-none"></div>
           
           <div id="details" class="col-12 mt-4">
             <h5 class="fw-bold">Info</h5>
-            <p>This example uses the <a href="https://opentdb.com/api_config.php" target="_blank">Open Trivia Database API</a> and retrieves 10 random trivia questions. Looking at the source code will show you that this API call reuses a very large portion of the code I wrote for the RESTCountries challenge.</p>
-            <p>The Open Trivia Database API accepts a total <code>amount</code> parameter, which is set as a data attribute of the #api element.</p>
-
-            <h5 class="fw-bold">source.js</h5>
-            <p><code>OpenTrivia</code> was added to the <code>source</code> object in source.js. This is where the endpoint and parameters are defined as well as how the output is compiled and rendered.</p>
-            <p>The #api element's endpoint data attribute defines which OpenTrivia path we use. This example defines the path as <code>default</code>, which means that we'll use what's defined in the <code>source/OpenTrivia/path/default</code> object in source.js.</p>
-            <p>The <code>default</code> path sets the endpoint to <code>/api/bonus-work/trivia.php</code>, creates the parameter(s), and sets up the <code>resultsFactory</code>.</p>
-            <p>When we render the results of the API call we use the <code>resultsFactory</code>. This lets us set a template for how the data gets compiled and rendered.</p>
-
-            <h5 class="fw-bold">/api/bonus-work/trivia.php</h5>
-            <p>This is the endpoint the <code>default</code> OpenTrivia path sets in source.js. It performs a curl request through a series of object-oriented abstractions.</p>
-            <p><code>/api/bonus-work/trivia.php</code> uses the <code>APIController</code> class and its subclasses to make curl requests, process the results, and output them in a universal format.</p>
-            <p>The <code>APIController</code> class exists in <code>controllers/APIController.php</code> and has handy <code>$apiCall</code> methods such as <code>->start()</code>, <code>->setOptions()</code>, <code>->execute()</code>, <code>->end()</code>, <code>->errorCheck()</code>, and more.</p>
-        </div>
+            <p>This example uses the <a href="https://opentdb.com/api_config.php" target="_blank">Open Trivia Database API</a> and retrieves 3 random trivia questions.</p>
+            <p>The Open Trivia Database API accepts a total <code>amount</code> parameter, which is set in the <code>source.js</code> definition.</p>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item">This page defines which source we are going to use through data attributes. <code>&lt;div id="app" data-source="OpenTrivia" data-path="default"&gt;</code>.
+              <li class="list-group-item"><code>onload="app.call()"</code> was added to the body tag of this page. This tells <code>/app.js</code> to immediately make a call to the source endpoint when the page loads.</li>
+              <li class="list-group-item"><code>/source.js</code> defines the <code>OpenTrivia</code> object, which includes the endpoint, any parameters we want to use, and a <code>build</code> function that tells <code>/app.js</code> how to render the UI.</li>
+              <li class="list-group-item"><code>/app.js</code> uses what's defined in <code>source.js</code> and makes a call to <code>/api/bonus-work/trivia.php</code>.</li>
+              <li class="list-group-item"><code>/api/bonus-work/trivia.php</code> retrieves and formats the data.</li>
+              <li class="list-group-item"><code>/app.js</code> will then iterate over the endpoint's response and <i>build</i> the UI by rendering the output of the <code>build</code> function in the <code>source.js OpenTrivia default path</code> response object.</li>
+            </ul>
+          </div>
 
         </div>
     </div>

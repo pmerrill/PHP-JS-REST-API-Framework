@@ -292,7 +292,7 @@ const source = {
                 param: {
                     default: {
                         name: 'amount',
-                        value: 10
+                        value: 3
                     }
                 },
                 response: {
