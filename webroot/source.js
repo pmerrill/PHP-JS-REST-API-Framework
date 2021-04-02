@@ -34,10 +34,12 @@ const source = {
                 },
 
                 // Response objects are mapped to keys in the endpoint's response.
-                // app.js will call build() on whatever you define in this object.
-                // It is important to only put what you want rendered in here and to 
-                // make sure that you include a build function that outputs the HTML you want in the UI.
+                // Define the data from the endpoint you want the UI to render.
                 response: {
+
+                    // You don't have to define each object in the API's response.
+                    // app.js will iterate over each object you add here and attempt to render it in the UI.
+                    // Be sure to include a build function in each object you add.
 
                     // This should exactly match a key provided by the api/[endpoint].php response.
                     // There should also be an element in the UI such as <div id="app-result" class="display">.

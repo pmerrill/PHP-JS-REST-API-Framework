@@ -143,9 +143,6 @@ const source = {
 
 ## Getting Started
 
-The files included in this repository are here to get you started by giving
-you an idea on how you might start the project.
-
 To start the server open a terminal window on unix/linux based systems and change
 directory to the project root. Then execute this command:
 
@@ -170,7 +167,7 @@ http://localhost:8765/index.php
 There are 2 ways to make an API call with this framework.
 
   1. When an element with an ID of "submit" is clicked.
-  2. By adding **```onload="app.call()```** to the body element.<br/>
+  2. By adding **```onload="app.call()"```** to the body element.<br/>
   	- [/reusability-examples/trivia.php](https://github.com/pmerrill/infosec/blob/master/webroot/reusability-examples/trivia.php).<br/>
   	- [Example](#extending-add-new-source)
 
@@ -285,11 +282,10 @@ class APICall extends APIController {
 <a name="documentation-api-endpoint"></a>
 **[api/[endpoint].php](https://github.com/pmerrill/infosec/tree/master/webroot/api)**
 
-- Implements [controllers/APIController.php](https://github.com/pmerrill/infosec/blob/master/webroot/controllers/APIController.php).<br/>
-  - Abstract cURL methods such as ->start(), ->execute(), ->end(). <br/>
-  - Uniform API response formatting. <br/>
-  - The output should be mapped to response property objects in **[source.js](https://github.com/pmerrill/infosec/blob/master/webroot/source.js)**.
-    - [More info](#ui-js)
+- Implements [controllers/APIController.php](https://github.com/pmerrill/infosec/blob/master/webroot/controllers/APIController.php) and uses abstract cURL methods such as ->start(), ->execute(), ->end(). <br/>
+- Uniform API response formatting. <br/>
+- The output should be mapped to response property objects in **[source.js](https://github.com/pmerrill/infosec/blob/master/webroot/source.js)**.
+  - [More info](#ui-js)
  
  ```php
   // Require the autoloader and helper functions
@@ -374,7 +370,6 @@ class APICall extends APIController {
   
   // The key names you choose here must be defined in source.js.
   // If they aren't then the values will be ignored by app.js when it tries to build the UI.
-  // You'll see what I mean if you keep reading this documentation.
   $output = outputTemplate();
   $output['result'] = $apiCall->result;
   
@@ -394,13 +389,13 @@ class APICall extends APIController {
 **[app.js](https://github.com/pmerrill/infosec/blob/master/webroot/app.js)**
 
 - UI controller. <br/>
-- Handles API calls and generates the UI based on the response. <br/>
+- Handles API calls and generates the UI based on what's in the endpoint's response. <br/>
 - API calls can be made in 2 ways. <br/>
   - Through the click of a UI element with a **submit** ID. ```<button id="submit">```<br/>
   - When the page loads. Add **```onload="app.call()```"** to the ```<body>``` tag. <br/>
 	  - See [/reusability-examples/trivia.php](https://github.com/pmerrill/infosec/blob/master/webroot/reusability-examples/trivia.php). <br/>
 	  - ```<body onload="app.call()">```
-- Relies on **[source.js](https://github.com/pmerrill/infosec/blob/master/webroot/source.js)** for API-specific definitions such as endpoint to hit, parameters to use, and rules for building the UI. <br/>
+- Relies on **[source.js](https://github.com/pmerrill/infosec/blob/master/webroot/source.js)** for API-specific definitions such as the API endpoint, parameters to use, and rules for building the UI. <br/>
 
 <a name="documentation-app-js-ready"></a>
 ```javascript
@@ -577,7 +572,7 @@ const display = {
         }
     },
     
-    // Performs bulk updates to the UI based on what the user is doing.
+    // Performs bulk updates to the UI.
     state: {
         loading: function(){
             display.render.loading(display.submitButton);
@@ -629,7 +624,7 @@ RESTCountries: {
       // and are passed to the endpoint as a query string.
       param: {
       
-        // Every source must have a default param if a call to the endpoint is triggered on click.
+        // Mst have a default param if a call to the endpoint is triggered on click.
         // See app.js $('#submit').on('click'... where default value gets assigned (~line 14).
         default: {
           name: 'search',
@@ -649,10 +644,12 @@ RESTCountries: {
       },
       
       // Response objects are mapped to keys in the endpoint's response.
-      // app.js will call build() on whatever you define in this object.
-      // It is important to only put what you want rendered in here and...
-      // to make sure that you include a build function that outputs the HTML you want in the UI.
+      // Define the data from the endpoint you want the UI to render.
       response: {
+        
+        // You don't have to define each object in the API's response.
+        // app.js will iterate over each object you add here and attempt to render it in the UI.
+        // Be sure to include a build function in each object you add.
       
         // This should match a key provided by the api/[endpoint].php response.
         result: {
@@ -697,13 +694,16 @@ RESTCountries: {
 <div id="app" data-source="RESTCountries" data-path="default"></div>
 ```
 
-- Must have an element with an ID that matches whatever data object you want to display. This element must have a **display class** and the ID must start with **app-**. It is case-sensitive and must match an object in the **[api/[endpoint].php](https://github.com/pmerrill/infosec/tree/master/webroot/api)** response as well as a response object in **[source.js](https://github.com/pmerrill/infosec/blob/master/webroot/source.js)**.
+- Must have an element with an ID that matches whatever API endpoint data object you want to display.
+  - This element must have a **display** class and the ID must start with **app-**.
+  - The ID must match an object in the **[api/[endpoint].php](https://github.com/pmerrill/infosec/tree/master/webroot/api)** response.
+  - The ID must also match a response object in **[source.js](https://github.com/pmerrill/infosec/blob/master/webroot/source.js)**.
 
 ```html
 <div id="app-result" class="display"></div>
 ```
 
-- Those 2 UI elements tell **[app.js](https://github.com/pmerrill/infosec/blob/master/webroot/app.js)** to interact with ```RESTCountries.path.default.response.result``` in **[source.js](https://github.com/pmerrill/infosec/blob/master/webroot/source.js)** (as defined below).
+- Those 2 UI elements tell **[app.js](https://github.com/pmerrill/infosec/blob/master/webroot/app.js)** to interact with ```RESTCountries.path.default.response.result``` in **[source.js](https://github.com/pmerrill/infosec/blob/master/webroot/source.js)**.
 
 <a name="ui-js"></a>
 ```javascript
@@ -724,7 +724,8 @@ RESTCountries: {
 
 <br/>
 
-- This also means that if the endpoint responds with something like the example below the ```<div id="app-result">``` UI element will be populated with what's in the ```result``` array as long as ```build()``` in **[source.js](https://github.com/pmerrill/infosec/blob/master/webroot/source.js)** processes it and returns HTML through [app.js](https://github.com/pmerrill/infosec/blob/master/webroot/app.js) to the UI.
+- This also means that if the endpoint responds with something like the example below the ```<div id="app-result">``` UI element will be populated with what's in the ```result``` array.
+  - That is as long as ```build()``` in **[source.js](https://github.com/pmerrill/infosec/blob/master/webroot/source.js)** returns an HTML output.
 
 **[api/[endpoint].php](https://github.com/pmerrill/infosec/tree/master/webroot/api)**
 ```php
