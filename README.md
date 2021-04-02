@@ -873,7 +873,9 @@ Now go to [localhost:8765/cat.html](http://localhost:8765/cat.html) to see some 
 <a name="extending-add-internal-source"></a>
 **Add an Internal Data Source**
 
-This framework could be easily extended to make calls to endpoints that return data from your own database. This is a little speculative, but I would do this by creating a new class in the **[APIController](#documentation-APIController) that extends ```APIController``` and handles communication with our database.
+This framework could be easily extended to make calls to endpoints that return data from your own database.
+
+This is a little speculative, but I would do this by creating a new class in the **[APIController](#documentation-APIController)** that extends ```APIController``` and handles communication with our database.
 
 This class would probably look something like this:
 
@@ -891,6 +893,8 @@ class DatabaseQuery extends APIController {
 }
 ```
 
+<br/>
+
 Then in the endpoint you use to retrieve internal data you could do something like this:
 
 ```php
@@ -906,4 +910,8 @@ echo json_encode($result);
 exit();
 ```
 
-Once you have an output you could add this API similarly to how you'd add any other API. Define it in **[source.js](https://github.com/pmerrill/infosec/blob/master/webroot/source.js)** and create a page that will render your data.
+<br/>
+
+Once you have an output you could add this API similarly to how you'd add any other API.
+
+Define it in **[source.js](https://github.com/pmerrill/infosec/blob/master/webroot/source.js)** and create a page that will render your data.
