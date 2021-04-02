@@ -24,6 +24,7 @@ Continue reading to learn more!
 			- [app](#documentation-app-js-app)
 			- [display](#documentation-app-js-display)
 		- [source.js](#documentation-source-js)
+		- [UI - Data flow](#documentation-ui)
 	- [5. Extending](#extending)
 		- [Adding a new data source](#extending-add-new-source)
     - [Adding an internal data source](#extending-add-internal-source)
@@ -684,7 +685,7 @@ RESTCountries: {
 <br/>
 <br/>
 
-<a name="ui"></a>
+<a name="documentation-ui"></a>
 **UI**
 
 - Must have an **app** ID element that defines which **[source.js](https://github.com/pmerrill/infosec/blob/master/webroot/source.js)** source and path we use.
