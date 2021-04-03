@@ -1,6 +1,6 @@
-Thank you so much for taking the time to look at my code! :smiley:
+This modular framework makes it easy to build a website using almost any REST API.
 
-I thoroughly enjoyed this challenge and spent a lot of time thinking about how to write my code in a way that would let it be easily extended and reused without coupling the client and server. The solution I came up with lets me easily integrate new data sources in only a couple of minutes.
+:smiley:
 
 Continue reading to learn more!
 
