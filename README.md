@@ -625,7 +625,7 @@ RESTCountries: {
       // and are passed to the endpoint as a query string.
       param: {
       
-        // Mst have a default param if a call to the endpoint is triggered on click.
+        // Must have a default param if a call to the endpoint is triggered on click.
         // See app.js $('#submit').on('click'... where default value gets assigned (~line 14).
         default: {
           name: 'search',
