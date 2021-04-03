@@ -32,7 +32,7 @@ There are 2 ways to make an API call with this framework.
 
 **Important**:
 <br/>
-- /frontend/controller.js: Performs API calls and renders the response according to rules defind in source.js.
+- /frontend/controller.js: Performs API calls and renders the response according to rules defined in source.js.
 - /frontend/source.js: Contains API sources. Defines the endpoint, required parameters, and how the API response is built.
 - /backend/api/...: Endpoints that source.js uses should be put here. These endpoints get the data and format it.
 
