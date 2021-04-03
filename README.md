@@ -145,14 +145,11 @@ Paste this template:
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
-  <body class="bg-theme" onload="app.call()">
-
-    <div class="container col-12 col-md-8 px-5 mx-auto mb-5">
-          <div id="app" data-source="CatFacts" data-path="default" class="col-12"></div>
-          <div id="messages" class="col-12 d-none"></div>
-          <div id="app-result" class="display col-12 mt-3 d-none"></div>
-        </div>
-    </div>
+  <body onload="app.call()">
+    
+    <div id="app" data-source="CatFacts" data-path="default"></div>
+    <div id="messages"></div>
+    <div id="app-result" class="display></div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script src="controller.js"></script>
