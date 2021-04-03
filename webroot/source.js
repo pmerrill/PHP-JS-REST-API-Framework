@@ -3,7 +3,7 @@ const source = {
     OpenTrivia: {
         path: {
             default: {
-                endpoint: '/api/bonus-work/trivia.php',
+                endpoint: '/api/trivia.php',
                 param: {
                     default: {
                         name: 'amount',
