@@ -1,6 +1,4 @@
-This modular framework makes it easy to build a website using almost any REST API.
-
-:smiley:
+This modular framework makes it easy to build a website using almost any REST API. :rocket:
 
 ## Getting Started
 
