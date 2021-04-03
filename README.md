@@ -28,6 +28,8 @@ There are 2 ways to make an API call with this framework.
   1. When an element with an ID of "submit" is clicked.
   2. By adding **```onload="app.call()"```** to the body element.<br/>
 
+<br/>
+
 **Important**:
 <br/>
 - /controller.js: Performs API calls and renders the response according to rules defind in source.js.
