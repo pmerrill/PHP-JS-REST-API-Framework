@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body>
+
+    <div id="app" data-source="RESTCountries" data-path="default">
+    <div class="input-group box-shadow">
+        <input id="search" type="text" placeholder="Search by name, full name, or country code" autofocus>
+        <button id="submit">Submit</button>
+    </div>
+    </div>
+
+    <div id="messages"></div>
+
+    <div id="app-result" class="display"></div>
+    <div id="app-info" class="display"></div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="controller.js"></script>
+    <script src="source.js"></script>
+  </body>
+</html>

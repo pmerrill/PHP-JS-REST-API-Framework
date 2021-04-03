@@ -9,9 +9,17 @@ $('document').ready(function(){
     $('#submit').on('click', function (){
         display.submitButton = $(this);
 
-        source[app.source].path[app.path].param.default.setValue();
-
-        let isValid = app.checkSourceParam.isValid( source[app.source].path[app.path].param.default );
+        let isValid = true;
+        
+        // Check if parameters exist for this source
+        if(!display.helper.isUndefined( source[app.source].path[app.path].param )) {
+            
+            source[app.source].path[app.path].param.default.setValue();
+            
+            isValid = app.helper.isValidParam( source[app.source].path[app.path].param.default );
+        
+        }
+        
         if(!isValid) {
             display.render.error('<b>Oops!</b>');
             return false;
@@ -26,20 +34,7 @@ const app = {
     source: $('#app').data('source'),
     path: $('#app').data('path'),
 
-    checkSourceParam: {
-        isValid: function(param){
-            let isValid = this.isValidLength(param);
-            isValid = !isValid ? this.isValidNumber(param) : isValid;
-            return isValid;
-        },
-        isValidLength: function(param){
-            return param.value.length > 0;
-        },
-        isValidNumber: function(param){
-            return param.value > 0;
-        }
-    },
-
+    // Performs the API call
     call: function(){
         display.state.loading();
         
@@ -59,8 +54,10 @@ const app = {
         });
     },
 
+    // Compiles the API call parameters
     sourceParameters: function(){
         let output = {};
+        
         let sourceParams = source[app.source].path[app.path].param;
         
         for(const property in sourceParams){
@@ -69,6 +66,23 @@ const app = {
         }
 
         return output;
+    },
+
+    helper: {
+        
+        // Source param validation
+        isValidParam: function(param){
+            let isValid = this.isValidLength(param);
+            isValid = !isValid ? this.isValidNumber(param) : isValid;
+            return isValid;
+        },
+
+        isValidLength: function(param){
+            return param.value.length > 0;
+        },
+        isValidNumber: function(param){
+            return param.value > 0;
+        }
     }
 }
 
@@ -87,10 +101,10 @@ const display = {
             return $('.display').addClass('d-none').empty();
         },
         loading: function(element){
-            return element !== null ? element.html('<div class="spinner-border spinner-border-sm"" role="status"><span class="visually-hidden">Loading...</span></div>') : true;
+            return element !== null ? element.html('Loading...') : true;
         },
-        searchIcon: function(element){
-            return element !== null ? element.html('<i class="fas fa-search fs-6"></i>') : true;
+        submitButton: function(element){
+            return element !== null ? element.html('Submit') : true;
         },
         disabledForm: function(){
             return $('#search').attr('disabled', true);
@@ -99,18 +113,27 @@ const display = {
             return $('#search').attr('disabled', false);
         },
 
+        // Passes through the definitions in source.js.
+        // Output is appended to the UI element with the same ID as the property.
         output: function(apiResponse){
             let sourcePath = source[app.source].path[app.path];
 
             for(const property in sourcePath.response){
+                
+                // Update the source path property value
+                // with what we got from the API.
                 sourcePath.response[property].value = apiResponse[property];
 
                 if (!sourcePath.response[property].isValid()) {
                     display.render.error('<b>Uh oh!</b>');
                 } else {
+                    
                     let output = sourcePath.response[property].build();
+                    
                     $('#app-' + property).append(output).removeClass('d-none');
+                
                 }
+
             } 
         }
     },
@@ -123,7 +146,7 @@ const display = {
             display.render.disabledForm();
         },
         doneLoading: function(){
-            display.render.searchIcon(display.submitButton);
+            display.render.submitButton(display.submitButton);
             display.render.enabledForm();
         }
     },
