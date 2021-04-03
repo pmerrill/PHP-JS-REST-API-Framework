@@ -169,7 +169,7 @@ Now go to [localhost:8765/cat.html](http://localhost:8765/cat.html) to see some 
 
 This framework could be easily extended to make calls to endpoints that return data from your own database.
 
-This is a little speculative, but I would do this by creating a new class in the **[APIController](#documentation-APIController)** that extends ```APIController``` and handles communication with our database.
+This is a little speculative, but I would do this by creating a new class in the **APIController** that extends ```APIController``` and handles communication with our database.
 
 This class would probably look something like this:
 
