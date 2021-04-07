@@ -10,70 +10,77 @@
 
     $apiController = new APIController;
 
-    // Define then validate the request method.
     $apiController->defineRequestMethod('GET');
+
     $apiController->validateRequest();
     if(!$apiController->isValidRequest){
         exitWithError(400, 'There was a problem processing your search.');
     }
 
-    $apiCall = new APICall;
-    $apiCall->setEndpointHost( 'https://restcountries.eu' );
+    $apiEndpoint = new APIEndpoint;
 
-    // The search input is part of the endpoint path.
-    // It isn't used in the query string.
+    $apiEndpoint->setHost( 'https://restcountries.eu' );
+    
+    // Extract the search term for use as part of the endpoint path.
     $country = findKeyValue($_GET, 'search');
 
     // Switch paths based on country length.
     $isAlphaCodeSearch = strlen($country) <= 3;
     $pathPart = $isAlphaCodeSearch ? 'alpha' : 'name';
+    
+    $apiEndpoint->setPath( '/rest/v2/' . $pathPart . '/' . $country );
 
-    $apiCall->setEndpointPath( '/rest/v2/' . $pathPart . '/' . $country );
-
-    // Optional parameters
-    $parameters = [
-        'fields' => findKeyValue($_GET, 'fields')
-    ];
+    // Optional parameters.
+    $parameters = [ 'fields' => findKeyValue($_GET, 'fields') ];
     $queryString = buildQueryString($parameters);
-    $apiCall->setEndpointQueryString($queryString);
+    $apiEndpoint->setQueryString($queryString);
 
     // Piece together the endpoint parts.
-    $apiCall->compileEndpoint();
+    $apiEndpoint->build();
+
+    $apiCall = new APICall;
 
     $apiCall->start();
 
     // Specify options.
     $options = array(
-        CURLOPT_URL => $apiCall->endpoint,
+        CURLOPT_URL => $apiEndpoint->endpoint,
         CURLOPT_RETURNTRANSFER => TRUE,
         CURLOPT_FAILONERROR => TRUE
     );
     $apiCall->setOptions($options);
 
     $result = $apiCall->execute();
-    $result = decodeResult($result);
-    $result = formatResult($result);
-    $apiCall->setResult($result);
 
+    // Validate the results.
     $apiCall->errorCheck();
     if($apiCall->hasError){
         $apiCall->end();
         exitWithError(404, 'We couldn\'t find anything for you.');
     }
 
-    // Optional sorting.
-    $apiCall->setSortKey('population');
-    $apiCall->sort('desc');
+    $apiResponse = new APIResponse;
 
-    // The key names you choose here must be defined in source.js.
-    // If they aren't then the values will be ignored by app.js when it tries to build the UI.
+    // Apply universal formatting.
+    $result = decodeResult($result);
+    $result = formatResult($result);
+
+    $apiResponse->setResult($result);
+
+    // Optional sorting by key.
+    $apiResponse->setSortKey('population');
+    $apiResponse->sort('desc');
+
+    // The key names you choose here must be defined in the frontend source response object.
+    // Otherwise, they will be ignored when the UI is built.
     $output = outputTemplate();
-    $output['result'] = $apiCall->result;
+    $output['result'] = $apiResponse->result;
     $output['info'] = [
-        'countries' => count($apiCall->result),
-        'regions' => countColumn($apiCall->result, 'region'),
-        'subregions' => countColumn($apiCall->result, 'subregion')
+        'countries' => count($apiResponse->result),
+        'regions' => countColumn($apiResponse->result, 'region'),
+        'subregions' => countColumn($apiResponse->result, 'subregion')
     ];
+
     echo json_encode($output);
 
     // Free resources when we're done.

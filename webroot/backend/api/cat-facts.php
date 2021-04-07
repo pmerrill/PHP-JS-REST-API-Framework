@@ -9,42 +9,55 @@
     setHeaders($headers);
 
     $apiController = new APIController;
-    
+
     $apiController->defineRequestMethod('GET');
+
     $apiController->validateRequest();
     if(!$apiController->isValidRequest){
         exitWithError(400, 'There was a problem processing your request.');
     }
 
+    $apiEndpoint = new APIEndpoint;
+    $apiEndpoint->setHost( 'https://cat-fact.herokuapp.com' );
+    $apiEndpoint->setPath( '/facts' );
+    $apiEndpoint->build();
+
     $apiCall = new APICall;
-    $apiCall->setEndpointHost( 'https://cat-fact.herokuapp.com' );
-    $apiCall->setEndpointPath( '/facts' );
-    $apiCall->compileEndpoint();
+
     $apiCall->start();
 
-    // Specify API call requirements.
+    // Specify options.
     $options = array(
-        CURLOPT_URL => $apiCall->endpoint,
+        CURLOPT_URL => $apiEndpoint->endpoint,
         CURLOPT_RETURNTRANSFER => TRUE,
         CURLOPT_FAILONERROR => TRUE
     );
     $apiCall->setOptions($options);
 
     $result = $apiCall->execute();
-    $result = decodeResult($result);
-    $result = formatResult($result);
-    $apiCall->setResult($result);
 
-    // Important error checking.
+    // Validate the results.
     $apiCall->errorCheck();
     if($apiCall->hasError){
         $apiCall->end();
         exitWithError(404, 'We couldn\'t find anything for you.');
     }
 
+    $apiResponse = new APIResponse;
+
+    // Apply universal formatting.
+    $result = decodeResult($result);
+    $result = formatResult($result);
+
+    $apiResponse->setResult($result);
+
+    // The key names you choose here must be defined in the frontend source response object.
+    // Otherwise, they will be ignored when the UI is built.
     $output = outputTemplate();
-    $output['result'] = $apiCall->result;
+    $output['result'] = $apiResponse->result;
+
     echo json_encode($output);
 
+    // Free resources when we're done.
     $apiCall->end();
     exit();

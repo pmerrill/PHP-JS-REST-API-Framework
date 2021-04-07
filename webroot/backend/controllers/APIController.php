@@ -18,31 +18,32 @@
 
     }
 
-    class APICall extends APIController {
-        private $endpointHost;
-        private $endpointPath;
-        private $endpointQueryString;
+    class APIEndpoint extends APIController {
+        private $host;
+        private $path;
+        private $queryString;
         public $endpoint;
+        
+        public function setHost($host){
+            $this->host = $host;
+        }
+
+        public function setPath($path){
+            $this->path = $path;
+        }
+
+        public function setQueryString($queryString){
+            $this->queryString = $queryString;
+        }
+
+        public function build(){
+            $this->endpoint = $this->host . $this->path . $this->queryString;
+        }
+    }
+
+    class APICall extends APIEndpoint {
         private $apiCall;
         public $hasError;
-        public $result;
-        private $sortKey;
-        
-        public function setEndpointHost($host){
-            $this->endpointHost = $host;
-        }
-
-        public function setEndpointPath($path){
-            $this->endpointPath = $path;
-        }
-
-        public function setEndpointQueryString($queryString){
-            $this->endpointQueryString = $queryString;
-        }
-
-        public function compileEndpoint(){
-            $this->endpoint = $this->endpointHost . $this->endpointPath . $this->endpointQueryString;
-        }
 
         public function start(){
             $this->apiCall = curl_init();
@@ -63,6 +64,16 @@
         public function hasErrorCode(){
             return curl_errno($this->apiCall) > 0;
         }
+
+        public function end(){
+            curl_close($this->apiCall);
+        }
+
+    }
+
+    class APIResponse extends APICall {
+        public $result;
+        private $sortKey;
 
         public function setResult($result){
             $this->result = $result;
@@ -87,9 +98,4 @@
                 return isset($b[$this->sortKey]) ? $b[$this->sortKey] <=> $a[$this->sortKey] : false;
             });
         }
-
-        public function end(){
-            curl_close($this->apiCall);
-        }
-
     }

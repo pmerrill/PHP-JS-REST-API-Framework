@@ -19,13 +19,10 @@
 
     $apiEndpoint = new APIEndpoint;
 
-    $apiEndpoint->setHost( 'https://opentdb.com' );
-    $apiEndpoint->setPath( '/api.php' );
+    $apiEndpoint->setHost( 'https://www.metaweather.com' );
 
-    // Optional parameters.
-    $parameters = [ 'amount' => findKeyValue($_GET, 'amount') ];
-    $queryString = buildQueryString($parameters);
-    $apiEndpoint->setQueryString($queryString);
+    $locationID = findKeyValue($_GET, 'locationID');
+    $apiEndpoint->setPath( '/api/location/' . $locationID . '/' );
 
     // Piece together the endpoint parts.
     $apiEndpoint->build();
@@ -55,7 +52,7 @@
 
     // Apply universal formatting.
     $result = decodeResult($result);
-    $result = formatResult($result['results']);
+    $result = formatResult($result);
 
     $apiResponse->setResult($result);
 

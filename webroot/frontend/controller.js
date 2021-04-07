@@ -1,5 +1,6 @@
 $('document').ready(function(){
 
+    // "Click" the submit button on specific keyup event.
     $('#search').keyup(function(event){
         if (event.key === 'Enter') {
             $('#submit').click();
@@ -7,165 +8,136 @@ $('document').ready(function(){
     });
 
     $('#submit').on('click', function (){
-        display.submitButton = $(this);
+        ui.submitButton = $(this);
 
-        let isValid = true;
+        // Access the default parameter for this data source.
+        let sourceDefaultParameter = source[api.source].path[api.path].parameters.default;
+
+        sourceDefaultParameter.setValue();
         
-        // Check if parameters exist for this source
-        if(!display.helper.isUndefined( source[app.source].path[app.path].param )) {
-            
-            source[app.source].path[app.path].param.default.setValue();
-            
-            isValid = app.helper.isValidParam( source[app.source].path[app.path].param.default );
-        
-        }
-        
-        if(!isValid) {
-            display.render.error('<b>Oops!</b>');
-            return false;
+        // Validate the default parameter value.
+        if(sourceDefaultParameter.value.toString().length > 0) {
+            api.call();
         } else {
-            app.call();
+            ui.state.error('<b>Oops!</b> Looks like you forgot to enter something. <i class="far fa-smile-wink"></i>');
+            return false;
         }
 
     });
+
 });
 
-const app = {
-    source: $('#app').data('source'),
-    path: $('#app').data('path'),
+const api = {
 
-    // Performs the API call
+    // Get the API source and endpoint set in the UI.
+    source: $('body').data('source'),
+    path: $('body').data('path'),
+
+    // Makes a call to the API endpoint and handles the response.
     call: function(){
-        display.state.loading();
         
-        $.get( 
-            source[app.source].path[app.path].endpoint,
-            this.sourceParameters()
+        ui.state.loading();
+        
+        $.get(
+            source[api.source].path[api.path].endpoint,
+            api.getSourceParameters()
         )
         .fail(function() {
-            display.render.error('<b>Bummer!</b>');
+            ui.state.error('<i class="fas fa-exclamation-circle"></i> <b>Bummer!</b> There was a problem completing your request.');
         })
         .done(function(response) {
-            display.render.output(response);
+            ui.build(response);
         })
         .always(function() {
-            display.state.doneLoading();
+            ui.state.doneLoading();
             return false;
         });
     },
 
-    // Compiles the API call parameters
-    sourceParameters: function(){
-        let output = {};
+    // Access source path parameters
+    // and generate a parameters object that we can pass with the API call.
+    getSourceParameters: function(){
+        let parameters = {};
+    
+        let sourcePathParameters = source[api.source].path[api.path].parameters;
         
-        let sourceParams = source[app.source].path[app.path].param;
-        
-        for(const property in sourceParams){
-            let name = sourceParams[property].name;
-            output[name] = sourceParams[property].value;
+        for(const property in sourcePathParameters){
+            
+            let name = sourcePathParameters[property].name;
+
+            // Add the parameter to the parameters object.
+            parameters[name] = sourcePathParameters[property].value;
+
         }
 
-        return output;
-    },
-
-    helper: {
-        
-        // Source param validation
-        isValidParam: function(param){
-            let isValid = this.isValidLength(param);
-            isValid = !isValid ? this.isValidNumber(param) : isValid;
-            return isValid;
-        },
-
-        isValidLength: function(param){
-            return param.value.length > 0;
-        },
-        isValidNumber: function(param){
-            return param.value > 0;
-        }
+        return parameters;
     }
+
 }
 
-const display = {
+const ui = {
+    
+    // This gets set to whatever element triggered the API call.
+    // Storing it here lets us change it to a loading spinner, etc.
     submitButton: null,
-
-    render: {
-        error: function(message){
-            this.emptyDisplay();
-            $('#messages').empty().append(message).removeClass('d-none');
-        },
-        emptyMessages: function(){
-            $('#messages').empty();
-        },
-        emptyDisplay: function(){
-            return $('.display').addClass('d-none').empty();
-        },
-        loading: function(element){
-            return element !== null ? element.html('Loading...') : true;
-        },
-        submitButton: function(element){
-            return element !== null ? element.html('Submit') : true;
-        },
-        disabledForm: function(){
-            return $('#search').attr('disabled', true);
-        },
-        enabledForm: function(){
-            return $('#search').attr('disabled', false);
-        },
-
-        // Passes through the definitions in source.js.
-        // Output is appended to the UI element with the same ID as the property.
-        output: function(apiResponse){
-            let sourcePath = source[app.source].path[app.path];
-
-            for(const property in sourcePath.response){
-                
-                // Update the source path property value
-                // with what we got from the API.
-                sourcePath.response[property].value = apiResponse[property];
-
-                if (!sourcePath.response[property].isValid()) {
-                    display.render.error('<b>Uh oh!</b>');
-                } else {
-                    
-                    let output = sourcePath.response[property].build();
-                    
-                    $('#app-' + property).append(output).removeClass('d-none');
-                
-                }
-
-            } 
-        }
-    },
-
+    
     state: {
         loading: function(){
-            display.render.loading(display.submitButton);
-            display.render.emptyDisplay();
-            display.render.emptyMessages();
-            display.render.disabledForm();
+            ui.loadingSpinner(ui.submitButton);
+            ui.emptyDisplay();
+            ui.emptyMessages();
+            ui.disabledForm();
+        },
+        error: function(message){
+            ui.emptyDisplay();
+            $('#messages').empty().append('<div class="error text-danger mt-2">' + message + '</div>').removeClass('d-none');
         },
         doneLoading: function(){
-            display.render.submitButton(display.submitButton);
-            display.render.enabledForm();
+            ui.searchIcon(ui.submitButton);
+            ui.enabledForm();
         }
     },
+    loadingSpinner: function(element){
+        return element !== null ? element.html('<div class="spinner-border spinner-border-sm"" role="status"><span class="visually-hidden">Loading...</span></div>') : true;
+    },
+    emptyDisplay: function(){
+        return $('.display').addClass('d-none').empty();
+    },
+    emptyMessages: function(){
+        $('#messages').empty();
+    },
+    disabledForm: function(){
+        return $('#search').attr('disabled', true);
+    },
+    searchIcon: function(element){
+        return element !== null ? element.html('<i class="fas fa-search fs-6"></i>') : true;
+    },
+    enabledForm: function(){
+        return $('#search').attr('disabled', false);
+    },
 
-    helper: {
-        isUndefined: function(value){
-            return typeof(value) === 'undefined';
-        },
-        isNull: function(value){
-            return value === null;
-        },
-        hasIndex: function(object, index){
-            return Object.keys(object[index]).length > 0;
-        },
-        hasKeys: function(object){
-            return Object.keys(object).length > 0;
-        },
-        numberWithCommas: function(number){
-            return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-        }
+    // Access the source path response objects
+    // and build the UI based on what the API response contains.
+    build: function(apiResponse){
+
+        let sourcePathResponse = source[api.source].path[api.path].response;
+
+        for(const property in sourcePathResponse){
+            
+            // Map data from the API to the source response object property value.
+            sourcePathResponse[property].value = apiResponse[property];
+
+            if (sourcePathResponse[property].isValid()) {
+                
+                // Build the UI as defined by this source's response property.
+                $('#api-' + property).append( sourcePathResponse[property].generateHTML() );
+                $('#api-' + property).removeClass('d-none');
+
+            } else {
+                ui.state.error('<i class="fas fa-exclamation-circle"></i> <b>Uh oh!</b> There was a problem.');
+            }
+
+        } 
     }
+    
 }
