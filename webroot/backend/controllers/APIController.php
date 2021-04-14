@@ -18,7 +18,7 @@
 
     }
 
-    class APIEndpoint extends APIController {
+    class APIEndpoint {
         private $host;
         private $path;
         private $queryString;
@@ -41,7 +41,7 @@
         }
     }
 
-    class APICall extends APIEndpoint {
+    class APICall {
         private $apiCall;
         public $hasError;
 
@@ -71,7 +71,7 @@
 
     }
 
-    class APIResponse extends APICall {
+    class APIResponse {
         public $result;
         private $sortKey;
 
